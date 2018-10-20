@@ -34,9 +34,6 @@ def delete_uploads():
 
 
 
-
-
-
 #views
 
 def index(request):
@@ -47,40 +44,13 @@ def about(request):
 
 def file_upload(request):
     if request.method == 'POST':
-        handle_uploaded_file(request.FILES['file'], str(request.FILES['file']))
+        for f in request.FILES.getlist('file'):
+            filename = f.name
+            print(filename)
+            handle_uploaded_file(f, filename)
         return render(request, 'syllab_dash/list_assignments.html') #on upload
-    return render(request, 'syllab_dash/file_upload.html') #on fail
+    return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
 
-
-# class file_upload(FormView):
-#     template_name = 'file_upload.html'
-#     form_class = UploadForm
-#     success_url = '/list_assignments/'
-
-#     def form_valid(self, form):
-#         for each in form.cleaned_data['attachments']:
-#             Attachment.objects.create(file=each)
-#         return super(file_upload, self).form_valid(form)
-
-
-
-# class file_upload(FormView):
-#     form_class = FileFieldForm
-#     template_name = 'file_upload.html'  # Replace with your template.
-#     success_url = '/list_assignments.html'  # Replace with your URL or reverse().
-
-#     def post(self, request, *args, **kwargs):
-#         form_class = self.get_form_class()
-#         form = self.get_form(form_class)
-#         files = request.FILES.getlist('file_field')
-#         if form.is_valid():
-#             for f in files:
-#                 print("got files ")
-#             return self.form_valid(form)
-#         else:
-#             return self.form_invalid(form)
-
-        
 
 def show_file_contents(request):
     return render(request, 'syllab_dash/show_file_contents.html')

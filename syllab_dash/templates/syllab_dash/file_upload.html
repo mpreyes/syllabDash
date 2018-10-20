@@ -1,3 +1,45 @@
 
+<html>
+<head>
+  <title>Django File Upload</title>
+  <style>
+    h1 {
+      font-size: 2em;
+      font-weight: bold;
+      color: #777777;
+      text-align: center
+    }
+    table {
+      margin: auto;
+    }
+  </style>
+</head>
+ 
+<body>
+<h1> Test file upload </h1>
+  
+  <table>
+    <tr>
+      <td>
+        <form action="{{ request.build_absolute_uri }}" method="POST" enctype="multipart/form-data" >
+         {% csrf_token %}
+        <input type="file" name="file" multiple/>
+          <br />
+          
+          <input type="submit" value="Upload File" />
+        </form>
+      </td>
+    </tr>
+  </table>
+ 
+</body>
+ 
+</html> 
 
-<h1> file upload </h1>
+
+{% comment %} 
+<form action="list_assignments.html" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Send" />
+</form> {% endcomment %}

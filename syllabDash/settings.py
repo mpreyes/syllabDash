@@ -25,7 +25,8 @@ SECRET_KEY = 'a$=3l%wa#ts@hkzy(nfaq$k!ht(ieao9it-nektuux7ib^pvm0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+
 
 INSTALLED_APPS = [
     'syllab_dash.apps.SyllabDashConfig',
@@ -46,6 +47,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'syllabDash.urls'
 

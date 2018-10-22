@@ -122,6 +122,6 @@ USE_TZ = True
 
 
 STATIC_URL = '/syllab_dash/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'syllab_dash', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 

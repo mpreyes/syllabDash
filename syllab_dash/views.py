@@ -1,6 +1,7 @@
-from django.shortcuts import render 
+from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.conf import settings
+
 import os
 
 # Create your views here.
@@ -11,7 +12,7 @@ def handle_uploaded_file(file, filename):
     if not os.path.exists('uploads/'):
         print("made upload folder")
         os.mkdir('uploads/')
- 
+
     with open('uploads/' + filename, 'wb+') as destination:
         print("dest " + str(destination))
         for chunk in file.chunks():
@@ -20,7 +21,7 @@ def handle_uploaded_file(file, filename):
     print("deleting files in upload folder")
     #delete_uploads() #uncomment me to see upload of files
 
-    
+
 def delete_uploads():
     folder = 'uploads/'
     for f in os.listdir(folder):
@@ -34,62 +35,37 @@ def delete_uploads():
 
 
 
-
-
-
 #views
 
 def index(request):
-      return render(request, 'syllab_dash/index.html')
+    return render(request, 'syllab_dash/index.html')
 
 def about(request):
     return render(request, 'syllab_dash/about.html')
 
 def file_upload(request):
+    files_parsed = []
+    files_parsed.append("hello it is me a parsed file")
     if request.method == 'POST':
-        handle_uploaded_file(request.FILES['file'], str(request.FILES['file']))
-        return render(request, 'syllab_dash/list_assignments.html') #on upload
-    return render(request, 'syllab_dash/file_upload.html') #on fail
+        for f in request.FILES.getlist('file'):
+            filename = f.name
+            print(filename)
+            handle_uploaded_file(f, filename)
+        return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
+        #return list_assignments(render,parsed_files_list = files_parsed)
+    return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
 
-
-# class file_upload(FormView):
-#     template_name = 'file_upload.html'
-#     form_class = UploadForm
-#     success_url = '/list_assignments/'
-
-#     def form_valid(self, form):
-#         for each in form.cleaned_data['attachments']:
-#             Attachment.objects.create(file=each)
-#         return super(file_upload, self).form_valid(form)
-
-
-
-# class file_upload(FormView):
-#     form_class = FileFieldForm
-#     template_name = 'file_upload.html'  # Replace with your template.
-#     success_url = '/list_assignments.html'  # Replace with your URL or reverse().
-
-#     def post(self, request, *args, **kwargs):
-#         form_class = self.get_form_class()
-#         form = self.get_form(form_class)
-#         files = request.FILES.getlist('file_field')
-#         if form.is_valid():
-#             for f in files:
-#                 print("got files ")
-#             return self.form_valid(form)
-#         else:
-#             return self.form_invalid(form)
-
-        
 
 def show_file_contents(request):
     return render(request, 'syllab_dash/show_file_contents.html')
 
 
 def list_assignments(request):
-    return render(request, 'syllab_dash/list_assignments.html')
+    parsed_files_list = []
+    #files_list.append("Here is me a file in list_assignments")
+    parsed_files_list.append("here is me a file in list_assignments")
+    return render(request, 'syllab_dash/list_assignments.html',{'files_list': parsed_files_list,"cache": cache.get("files_parsed_list")})
 
 
 def finished_upload(request):
     return render(request, 'syllab_dash/finished_upload.html')
-

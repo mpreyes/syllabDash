@@ -61,6 +61,8 @@ typings/
 .next
 
 #ignore uploads folder
-uploads/
+uploads/*
+
+#ignore .json files for Heroku deployment
 package.json
 package-lock.json

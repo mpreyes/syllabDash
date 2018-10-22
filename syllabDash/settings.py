@@ -121,7 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 
-STATIC_URL = '/static/'
+STATIC_URL = '/syllab_dash/static/syllab_dash/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'syllab_dash', 'static')
 
 

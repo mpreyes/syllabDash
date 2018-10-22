@@ -91,6 +91,12 @@
     table {
       margin: auto;
     }
+    #filelist {
+      color: white;
+      text-align: left;
+      font: 
+    }
+
     </style>
 
 
@@ -152,8 +158,10 @@
                 <td>
                   <form action="{{ request.build_absolute_uri }}" method="POST" enctype="multipart/form-data" >
                   {% csrf_token %}
-                  <input type="file" name="file" multiple/>
-                    <br />
+                  <input type="file" name="file" id="files" multiple/>
+
+                  <pre id="filelist" style="display:none;"></pre>
+                  <br>
                     
                     <input type="submit" value="Upload Files" />
                   </form>
@@ -166,9 +174,6 @@
 
       </div>
     </section>
-
-
-
 
 
 
@@ -210,6 +215,7 @@
 
     <!-- Custom scripts for this template -->
     <script src="{% static "syllab_dash/js/creative.min.js" %}"></script>
+    <script src="{% static "syllab_dash/js/file_upload.js" %}"></script>
 
   </body>
 

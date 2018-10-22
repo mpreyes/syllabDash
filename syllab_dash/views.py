@@ -1,6 +1,7 @@
 from django.shortcuts import render 
 from django.http import HttpResponseRedirect
 from django.conf import settings
+
 import os
 
 # Create your views here.
@@ -43,12 +44,15 @@ def about(request):
     return render(request, 'syllab_dash/about.html')
 
 def file_upload(request):
+    files_parsed = []
+    files_parsed.append("hello it is me a parsed file")
     if request.method == 'POST':
         for f in request.FILES.getlist('file'):
             filename = f.name
             print(filename)
             handle_uploaded_file(f, filename)
-        return render(request, 'syllab_dash/list_assignments.html') #on upload
+        return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
+        #return list_assignments(render,parsed_files_list = files_parsed)
     return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
 
 
@@ -57,7 +61,10 @@ def show_file_contents(request):
 
 
 def list_assignments(request):
-    return render(request, 'syllab_dash/list_assignments.html')
+    parsed_files_list = []
+    #files_list.append("Here is me a file in list_assignments")
+    parsed_files_list.append("here is me a file in list_assignments")
+    return render(request, 'syllab_dash/list_assignments.html',{'files_list': parsed_files_list,"cache": cache.get("files_parsed_list")})
 
 
 def finished_upload(request):

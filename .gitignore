@@ -62,3 +62,5 @@ typings/
 
 #ignore uploads folder
 uploads/
+package.json
+package-lock.json

@@ -15,12 +15,6 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SAS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static/syllab_dash/scss')
-STATIC_ROOT = SAS_PROCESSOR_ROOT
-COMPRESS_ROOT = os.path.join(BASE_DIR, 'static/syllab_dash/scss')
-
-SASS_PROCESSOR_ENABLED = True
-SASS_PROCESSOR_INCLUDE_FILE_PATTERN = r'^.+\.scss$'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -33,18 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'sass_processor.finders.CssFinder',
-]
-
-SASS_PROCESSOR_INCLUDE_DIRS = [
-    os.path.join(BASE_DIR, 'static/syllab_dash/scss'),
-]
-
 INSTALLED_APPS = [
     'syllab_dash.apps.SyllabDashConfig',
     'django.contrib.admin',
@@ -53,7 +35,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'sass_processor',
 ]
 
 MIDDLEWARE = [

@@ -12,4 +12,3 @@ urlpatterns = [
     path('list_assignments/', views.list_assignments, name='list_assignments'),
     path('finished_upload/', views.finished_upload, name='finished_upload'),
 ]
-

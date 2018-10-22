@@ -1,0 +1,21 @@
+{
+  "name": "syllabdash",
+  "version": "1.0.0",
+  "description": "A syllabus parser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node-sass syllab_dash/static/syllab_dash/scss -o syllab_dash/static/syllab_dash/css/",
+    "minify": "node-sass syllab_dash/static/syllab_dash/scss -o syllab_dash/static/syllab_dash/min_css/ --output-style compressed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mpreyes/syllabDash.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mpreyes/syllabDash/issues"
+  },
+  "homepage": "https://github.com/mpreyes/syllabDash#readme"
+}

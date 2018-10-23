@@ -25,7 +25,7 @@ SECRET_KEY = 'a$=3l%wa#ts@hkzy(nfaq$k!ht(ieao9it-nektuux7ib^pvm0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost','syllab-dash.herokuapp.com']
+ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost','syllab-dash.herokuapp.com']
 
 
 INSTALLED_APPS = [
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-print(TEMPLATES[0]['DIRS']);
+print(TEMPLATES[0]['DIRS'])
 
 WSGI_APPLICATION = 'syllabDash.wsgi.application'
 
@@ -81,6 +81,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
     }
 }
 

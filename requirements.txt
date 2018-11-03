@@ -4,3 +4,4 @@ whitenoise
 pylibmc==1.5.2
 django-heroku-memcacheify
 python-docx
+python-dateutil

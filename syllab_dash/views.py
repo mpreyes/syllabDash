@@ -3,9 +3,13 @@ from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
 from docx.api import Document
-import datetime #get timestamp as key for cache: datetime.datetime.now
+from dateutil import parser
+
 from itertools import islice
+from datetime import * #get timestamp as key for cache: datetime.datetime.now
 import os
+import rfc3339      # for date object -> date string
+
 
 # Create your views here.
 
@@ -39,7 +43,7 @@ import os
 
 
 
-def parse_tables(f,filename): # returns tables in document
+def file_tables(f,filename): # returns tables in document
     print("parse files")
     document_tables = []
     document = Document(f) #currently only supports docx files
@@ -64,14 +68,16 @@ def file_upload(request):
     files_parsed = [] #files parsed
     parsed_tables = [] #extracting tables from document
     candidate_tables = [] # tables that contain "date", or "week", or 
-    parsed_assignments = []
+    parsed_table_data = [] #each row is dictionary, headers mapped to column data
+    parsed_assignments = [] #only event data pulled from parsed_table_data
     if request.method == 'POST':
         for f in request.FILES.getlist('file'):
             filename = f.name
             print(filename)
-            parsed_tables = parse_tables(f,filename)
+            parsed_tables = file_tables(f,filename)
             candidate_tables = get_tables_cont_dates(parsed_tables)
-            parsed_assignments =  parse_assignments(candidate_tables)
+            parsed_table_data =  parse_table_data(candidate_tables)
+            parsed_assignments = parse_assignments(parsed_table_data)
             files_parsed.append(f)
         cache.set(cache_key,files_parsed,cache_time)
         return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
@@ -106,7 +112,7 @@ def get_tables_cont_dates(tables): #parse tables, return those containing "date"
                     break
     return candidate_tables
 
-def parse_assignments(candidate_tables):
+def parse_table_data(candidate_tables):
     data = []
     for c in candidate_tables:
         print(c)
@@ -133,6 +139,43 @@ def parse_assignments(candidate_tables):
     # print("after removal")
     # print(lower_data)
     return lower_data
+
+def parse_assignments(table_data):
+    assignments = []
+    for row in table_data:
+        date = row["date"]
+        #parse date here
+        # date = parser.parse(date)
+        datetime_object = datetime.strptime('Jun 1 2005', '%b %d %Y')
+        datetime_object = rfc3339.rfc3339(datetime_object) #change to rfc3339 format
+        timezone = datetime.utcnow().astimezone().tzinfo
+        print("my timezone")
+        #print(timezone)
+        print("my date")
+        print(datetime_object)
+        # print(date)
+        
+        event = {
+            'summary': 'TESTING',
+            'location': '',
+            'description': '',
+            'start': {
+                'dateTime': date,
+                'timeZone': 'America/Los_Angeles',
+            },
+            'end': {
+                'dateTime': date,
+                'timeZone': 'America/Los_Angeles',
+            },
+            'recurrence': [
+                
+            ],
+            'attendees': [
+            ],
+            'reminders': {
+            },
+            }
+        assignments.append(event)
 
         
 def list_assignments(request):

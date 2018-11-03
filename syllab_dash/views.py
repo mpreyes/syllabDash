@@ -111,7 +111,6 @@ def parse_assignments(candidate_tables):
     for c in candidate_tables:
         print(c)
         for i, row in enumerate(c.rows):
-            
             text = (cell.text for cell in row.cells)
             # Establish the mapping based on the first row
             # headers; these will become the keys of our dictionary
@@ -127,7 +126,7 @@ def parse_assignments(candidate_tables):
     # print(data)
     lower_data = []
     for i in data:
-        lower_dict = dict((k.lower(), v.strip('\n')) for k, v in i.items())
+        lower_dict = dict((k.lower(), v.replace('\n','')) for k, v in i.items())
         lower_data.append(lower_dict)
         print(lower_dict)
     # print("after removal")

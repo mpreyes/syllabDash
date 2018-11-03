@@ -1,9 +1,17 @@
+from __future__ import print_function
+
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
 from docx.api import Document
 import datetime #get timestamp as key for cache: datetime.datetime.now
+
+# imports for google api
+from apiclient.discovery import build
+from oauth2client.file import Storage
+from oauth2client.client import OAuth2WebServerFlow
+import time
 
 import os
 
@@ -41,6 +49,7 @@ def delete_uploads():
 #views
 
 def index(request):
+    insertEvents(request)
     return render(request, 'syllab_dash/index.html')
 
 def about(request):
@@ -50,7 +59,7 @@ def file_upload(request):
     cache_key = 'user_boo' # needs to be unique
     cache_time = 7200 # time in seconds for cache to be valid, 2 hours
     files_parsed = []
-    
+
     if request.method == 'POST':
         for f in request.FILES.getlist('file'):
             filename = f.name
@@ -60,11 +69,11 @@ def file_upload(request):
         cache.set(cache_key,files_parsed,cache_time)
         return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
-    return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
+    return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
 
 
 def show_file_contents(request):
-    
+
     return render(request, 'syllab_dash/show_file_contents.html')
 
 
@@ -80,7 +89,7 @@ def list_assignments(request):
                 print(p.text)  # parsePdf(p), parseWord(p), etc ?
                 parsed_files.append(p.text)
                 #break
-        
+
 
         #print(data)
     return render(request, 'syllab_dash/list_assignments.html',{"cached_files_list": cache.get("user_boo"), "parsed_files": parsed_files})
@@ -88,3 +97,87 @@ def list_assignments(request):
 
 def finished_upload(request):
     return render(request, 'syllab_dash/finished_upload.html')
+
+
+def insertEvents(request):
+    # If modifying these scopes, delete the file token.json.
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+
+    testEvent = {
+      'summary': 'This is a test event summary.',
+      'start': {
+        'dateTime': '2018-11-02T22:10:00',
+        'timeZone': time.tzname[time.daylight]
+      },
+      'end': {
+        'dateTime': '2018-11-02T23:00:00',
+        'timeZone': time.tzname[time.daylight]
+      },
+      'reminders': {
+        'useDefault': False,
+        'overrides': [
+          {'method': 'email', 'days': 7},
+          {'method': 'popup', 'minutes': 10},
+        ],
+      },
+    }
+
+
+    testEvent2 = {
+      'summary': 'This is a test event summary.',
+      'start': {
+        'dateTime': '2019-11-09T22:10:00',
+        'timeZone': time.tzname[time.daylight]
+      },
+      'end': {
+        'dateTime': '2018-11-09T23:00:00',
+        'timeZone': time.tzname[time.daylight]
+      },
+      'reminders': {
+        'useDefault': False,
+        'overrides': [
+          {'method': 'email', 'days': 7},
+          {'method': 'popup', 'minutes': 10},
+        ],
+      },
+    }
+
+
+
+    """Shows basic usage of the Google Calendar API.
+    Prints the start and name of the next 10 events on the user's calendar.
+    """
+    flow = OAuth2WebServerFlow(
+        client_id='319052537199-fndghhjj6akqht9gmooe818k5b00jnp6.apps.googleusercontent.com',
+        client_secret='6yYGMakT8_lBX4mTiUr7yfb5',
+        scope='https://www.googleapis.com/auth/calendar',
+        user_agent='Syllab-Dash',
+    )
+    storage = Storage('calendar.dat')
+    credentials = storage.get()
+
+    code = request.GET.get('code')
+    if credentials is None or credentials.invalid == True:
+        oauth_callback = 'index.html'
+        flow.redirect_uri = oauth_callback
+        flow.step1_get_authorize_url()
+        credential = flow.step2_exchange(code, http=None)
+        storage.put(credential)
+        credential.set_store(storage)
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+
+    service = build(serviceName='calendar', version='v3', http=http,
+                    developerKey='AIzaSyBP60OCOPNIXTWVHG-XmorCqvBsjzThdFQ')
+
+    event = service.events().insert(calendarId='primary', body=testEvent).execute()
+    event2 = service.events().insert(calendarId='primary', body=testEvent2).execute()
+
+    if not event:
+        print("Error with adding event 1")
+    else:
+        print("Added event 1 successfully... maybe.")
+    if not event2:
+        print("Error with adding event 2")
+    else:
+        print("Added event 2 successfully... maybe.")

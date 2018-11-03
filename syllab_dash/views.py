@@ -75,7 +75,7 @@ def file_upload(request):
     cache_time = 7200 # time in seconds for cache to be valid, 2 hours
     files_parsed = [] #files parsed
     parsed_tables = [] #extracting tables from document
-    candidate_tables = [] # tables that contain "date", or "week", or 
+    candidate_tables = [] # tables that contain "date", or "week", or
     parsed_table_data = [] #each row is dictionary, headers mapped to column data
     parsed_assignments = [] #only event data pulled from parsed_table_data
     if request.method == 'POST':
@@ -168,7 +168,7 @@ def parse_assignments(table_data):
         print("my date")
         print(datetime_object)
         # print(date)
-        
+
         event = {
             'summary': 'TESTING',
             'location': '',
@@ -182,7 +182,7 @@ def parse_assignments(table_data):
                 'timeZone': timezone,
             },
             'recurrence': [
-                
+
             ],
             'attendees': [
             ],
@@ -190,8 +190,9 @@ def parse_assignments(table_data):
             },
             }
         assignments.append(event)
+    return assignments
 
-        
+
 def list_assignments(request):
     data = cache.get("user_boo")
     print(data)

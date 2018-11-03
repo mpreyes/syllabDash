@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
@@ -61,7 +61,7 @@ def parse_tables(f,filename): # returns tables in document
 #views
 
 def index(request):
-    insertEvents(request)
+    #insertEvents(request)
     return render(request, 'syllab_dash/index.html')
 
 def about(request):
@@ -83,7 +83,8 @@ def file_upload(request):
             parsed_assignments =  parse_assignments(candidate_tables)
             files_parsed.append(f)
         cache.set(cache_key,files_parsed,cache_time)
-        return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
+        print("RENDERING NEW FILE")
+        return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
     return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
 
@@ -165,7 +166,7 @@ def list_assignments(request):
 def finished_upload(request):
     return render(request, 'syllab_dash/finished_upload.html')
 
-
+"""
 def insertEvents(request):
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
@@ -211,40 +212,42 @@ def insertEvents(request):
 
 
 
-    """Shows basic usage of the Google Calendar API.
-    Prints the start and name of the next 10 events on the user's calendar.
     """
-    flow = OAuth2WebServerFlow(
-        client_id='319052537199-fndghhjj6akqht9gmooe818k5b00jnp6.apps.googleusercontent.com',
-        client_secret='6yYGMakT8_lBX4mTiUr7yfb5',
-        scope='https://www.googleapis.com/auth/calendar',
-        user_agent='Syllab-Dash',
-    )
-    storage = Storage('calendar.dat')
-    credentials = storage.get()
-
-    code = request.GET.get('code')
-    if credentials is None or credentials.invalid == True:
-        oauth_callback = 'index.html'
-        flow.redirect_uri = oauth_callback
-        flow.step1_get_authorize_url()
-        credential = flow.step2_exchange(code, http=None)
-        storage.put(credential)
-        credential.set_store(storage)
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-
-    service = build(serviceName='calendar', version='v3', http=http,
-                    developerKey='AIzaSyBP60OCOPNIXTWVHG-XmorCqvBsjzThdFQ')
-
-    event = service.events().insert(calendarId='primary', body=testEvent).execute()
-    event2 = service.events().insert(calendarId='primary', body=testEvent2).execute()
-
-    if not event:
-        print("Error with adding event 1")
-    else:
-        print("Added event 1 successfully... maybe.")
-    if not event2:
-        print("Error with adding event 2")
-    else:
-        print("Added event 2 successfully... maybe.")
+    # Shows basic usage of the Google Calendar API.
+    # Prints the start and name of the next 10 events on the user's calendar.
+    # """
+    #
+    # flow = OAuth2WebServerFlow(
+    #     client_id='319052537199-fndghhjj6akqht9gmooe818k5b00jnp6.apps.googleusercontent.com',
+    #     client_secret='6yYGMakT8_lBX4mTiUr7yfb5',
+    #     scope='https://www.googleapis.com/auth/calendar',
+    #     user_agent='Syllab-Dash',
+    # )
+    # storage = Storage('calendar.dat')
+    # credentials = storage.get()
+    #
+    # code = request.GET.get('code')
+    # if credentials is None or credentials.invalid == True:
+    #     oauth_callback = 'index.html'
+    #     flow.redirect_uri = oauth_callback
+    #     flow.step1_get_authorize_url()
+    #     credential = flow.step2_exchange(code, http=None)
+    #     storage.put(credential)
+    #     credential.set_store(storage)
+    # http = httplib2.Http()
+    # http = credentials.authorize(http)
+    #
+    # service = build(serviceName='calendar', version='v3', http=http,
+    #                 developerKey='AIzaSyBP60OCOPNIXTWVHG-XmorCqvBsjzThdFQ')
+    #
+    # event = service.events().insert(calendarId='primary', body=testEvent).execute()
+    # event2 = service.events().insert(calendarId='primary', body=testEvent2).execute()
+    #
+    # if not event:
+    #     print("Error with adding event 1")
+    # else:
+    #     print("Added event 1 successfully... maybe.")
+    # if not event2:
+    #     print("Error with adding event 2")
+    # else:
+    #     print("Added event 2 successfully... maybe.")

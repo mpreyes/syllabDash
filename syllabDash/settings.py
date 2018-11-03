@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-
+import pylibmc
+from memcacheify import memcacheify
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,6 +27,10 @@ SECRET_KEY = 'a$=3l%wa#ts@hkzy(nfaq$k!ht(ieao9it-nektuux7ib^pvm0'
 DEBUG = True
 
 ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost','syllab-dash.herokuapp.com']
+
+# servers = os.environ['mc5.dev.ec2.memcachier.com:11211']
+# username = os.environ['8D80A8']
+# password = os.environ['B9689004027E5F147242E3EE56D3AB3B']
 
 
 INSTALLED_APPS = [
@@ -84,12 +89,55 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
-    }
-}
+CACHES = memcacheify()
+
+
+# CACHES = {
+
+#     'default': {
+#         # Use pylibmc
+#         'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+
+#         # TIMEOUT is not the connection timeout! It's the default expiration
+#         # timeout that should be applied to keys! Setting it to `None`
+#         # disables expiration.
+#         'TIMEOUT': 7200,
+
+#         'LOCATION': servers,
+
+#         'OPTIONS': {
+#             # Use binary memcache protocol (needed for authentication)
+#             'binary': True,
+#             'username': username,
+#             'password': password,
+#             'behaviors': {
+#                 # Enable faster IO
+#                 'no_block': True,
+#                 'tcp_nodelay': True,
+
+#                 # Keep connection alive
+#                 'tcp_keepalive': True,
+
+#                 # Timeout settings
+#                 'connect_timeout': 2000, # ms
+#                 'send_timeout': 750 * 1000, # us
+#                 'receive_timeout': 750 * 1000, # us
+#                 '_poll_timeout': 2000, # ms
+
+#                 # Better failover
+#                 'ketama': True,
+#                 'remove_failed': 1,
+#                 'retry_timeout': 2,
+#                 'dead_timeout': 30,
+#             }
+#         }
+#     }
+#     # 'default': {
+#     #     'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+#     #     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+#     #     'LOCATION': 'unique-snowflake',
+#     # }
+# }
 
 
 # Password validation

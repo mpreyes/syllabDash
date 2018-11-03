@@ -11,30 +11,30 @@ import os
 
 #helper functions
 
-def handle_uploaded_file(file, filename):
-    if not os.path.exists('uploads/'):
-        print("made upload folder")
-        os.mkdir('uploads/')
+# def handle_uploaded_file(file, filename):
+#     if not os.path.exists('uploads/'):
+#         print("made upload folder")
+#         os.mkdir('uploads/')
 
-    with open('uploads/' + filename, 'wb+') as destination:
-        print("dest " + str(destination))
-        for chunk in file.chunks():
-            destination.write(chunk)
+#     with open('uploads/' + filename, 'wb+') as destination:
+#         print("dest " + str(destination))
+#         for chunk in file.chunks():
+#             destination.write(chunk)
 
-    print("deleting files in upload folder")
+    #print("deleting files in upload folder")
     #delete_uploads() #uncomment me to see upload of files
 
 
-def delete_uploads():
-    folder = 'uploads/'
-    for f in os.listdir(folder):
-        print("file: " + str(f))
-        file_path = os.path.join(folder,f)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print(e)
+# def delete_uploads():
+#     folder = 'uploads/'
+#     for f in os.listdir(folder):
+#         print("file: " + str(f))
+#         file_path = os.path.join(folder,f)
+#         try:
+#             if os.path.isfile(file_path):
+#                 os.unlink(file_path)
+#         except Exception as e:
+#             print(e)
 
 
 
@@ -50,7 +50,8 @@ def file_upload(request):
     cache_key = 'user_boo' # needs to be unique
     cache_time = 7200 # time in seconds for cache to be valid, 2 hours
     files_parsed = []
-    
+    # cache.set("foo", "bar")
+    # print cache.get("foo")
     if request.method == 'POST':
         for f in request.FILES.getlist('file'):
             filename = f.name

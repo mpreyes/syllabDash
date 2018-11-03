@@ -85,7 +85,11 @@
             <hr class="light my-4">
             here they are listed
 
-            {% for file in files_list %}
+            {% for file in cached_files_list %}
+              <li>{{file }}</li>
+            {% endfor %}
+
+                {% for file in parsed_files %}
               <li>{{file }}</li>
             {% endfor %}
 

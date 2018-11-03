@@ -7,3 +7,4 @@ python-docx
 python-dateutil
 rfc3339
 google-api-python-client
+oauth2client

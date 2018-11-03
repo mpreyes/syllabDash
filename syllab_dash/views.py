@@ -14,17 +14,21 @@ import os  #get timestamp as key for cache: datetime.datetime.now
 import rfc3339      # for date object -> date string
 import datetime #get timestamp as key for cache: datetime.datetime.now
 # imports for google api
+from datetime import *
 from apiclient.discovery import build
 from oauth2client.file import Storage
 from oauth2client.client import OAuth2WebServerFlow
 import time
 from django.contrib.staticfiles.templatetags.staticfiles import static
-
+from datetime import datetime
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 # from django.templatetags.static import static
 import re
+
+
+
 
 
 # Create your views here.
@@ -244,7 +248,7 @@ def insertEvents():
     
 
     # Call the Calendar API
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
    
     event = service.events().insert(calendarId = 'primary', body=event).execute()
     print('Event created:')

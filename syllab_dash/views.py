@@ -116,8 +116,10 @@ def parse_assignments(table_data, file):
     assignments = []
     for row in table_data:
         date = parse_date(row["date"])
-        print(date)
-        summary = parse_summary(row["assignments"],file) or parse_summary(row["assignment"],file)
+        for key in row.keys():
+            if 'assignment' in key:
+                summary = parse_summary(row[key], file)
+                break
         timezone = datetime.utcnow().astimezone().tzinfo
         event = {
             'summary': summary,

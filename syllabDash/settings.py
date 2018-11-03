@@ -26,7 +26,7 @@ SECRET_KEY = 'a$=3l%wa#ts@hkzy(nfaq$k!ht(ieao9it-nektuux7ib^pvm0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost','syllab-dash.herokuapp.com']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'syllab-dash.herokuapp.com']
 
 # servers = os.environ['mc5.dev.ec2.memcachier.com:11211']
 # username = os.environ['8D80A8']
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-print(TEMPLATES[0]['DIRS'])
+STATIC_ROOT = os.path.join(BASE_DIR, 'syllab_dash', 'static')
 
 WSGI_APPLICATION = 'syllabDash.wsgi.application'
 
@@ -178,11 +178,7 @@ USE_TZ = True
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'syllab_dash','static', 'syllab_dash'),
+STATICFILE_DIRS = (
+    os.path.join(BASE_DIR, 'syllab_dash', 'static', 'syllab_dash')
 )
-
-
-

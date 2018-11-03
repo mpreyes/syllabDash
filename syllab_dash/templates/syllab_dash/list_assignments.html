@@ -83,10 +83,21 @@
           <div class="col-lg-8 mx-auto text-center">
             <h2 class="section-heading text-white">List assignments</h2>
             <hr class="light my-4">
-            here they are listed
+            here they are listed:
 
-            {% for file in cached_files_list %}
-              <li>{{file }}</li>
+                {% comment %} for i in data:
+        filename, table = i
+        print(filename)
+        print(table) {% endcomment %}
+
+            {% for file in file_data %}
+            {{ file }} <br>
+             {% for things in file %} <br>
+                {{things}}
+  
+
+      
+                {% endfor %}
             {% endfor %}
 
                 {% for file in parsed_files %}

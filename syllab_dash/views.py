@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from __future__ import print_function
+
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
@@ -7,8 +9,13 @@ from dateutil.parser import parse
 from itertools import islice
 from datetime import datetime #get timestamp as key for cache: datetime.datetime.now
 from dateutil import parser
-import os
+import os  #get timestamp as key for cache: datetime.datetime.now
 
+# imports for google api
+from apiclient.discovery import build
+from oauth2client.file import Storage
+from oauth2client.client import OAuth2WebServerFlow
+import time
 
 # Create your views here.
 
@@ -51,11 +58,12 @@ def file_tables(f,filename): # returns tables in document
         print(t)
         document_tables.append(t)
     return document_tables
-            
+
 
 #views
 
 def index(request):
+    #insertEvents(request)
     return render(request, 'syllab_dash/index.html')
 
 def about(request):
@@ -76,22 +84,26 @@ def file_upload(request):
             parsed_tables = file_tables(f,filename)
             candidate_tables = get_tables_cont_dates(parsed_tables)
             parsed_table_data =  parse_table_data(candidate_tables)
+            display_table_files = (filename, parsed_table_data)
             parsed_assignments = parse_assignments(parsed_table_data)
-            files_parsed.append(f)
+            files_parsed.append(display_table_files)
+
         cache.set(cache_key,files_parsed,cache_time)
-        return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
+        print("RENDERING NEW FILE")
+        return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
     return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
-
 
 
 def show_file_contents(request):
 
     return render(request, 'syllab_dash/show_file_contents.html')
 
+    return render(request, 'syllab_dash/show_file_contents.html')
+
 # def get_table_index(tables):
 #     tableList = []
-#     for table in tables: 
+#     for table in tables:
 #         for i, cell in table.rows[0]:
 #             if 'date' in cell.text:
 #                 tableList.append(i)
@@ -116,7 +128,7 @@ def parse_table_data(candidate_tables):
     for c in candidate_tables:
         print(c)
         for i, row in enumerate(c.rows):
-            
+
             text = (cell.text for cell in row.cells)
             # Establish the mapping based on the first row
             # headers; these will become the keys of our dictionary
@@ -148,20 +160,20 @@ def parse_assignments(table_data):
         datetime_object = datetime.strptime('Nov 1 2005  1:33PM', '%b %d %Y %I:%M%p')
         timezone = datetime.utcnow().astimezone().tzinfo
         print("my timezone")
-        #print(timezone)
+        print(timezone)
         print("my date")
-        print(datetime_object)
+        #print(datetime_object)
         event = {
             'summary': 'TESTING',
             'location': '',
             'description': '',
             'start': {
                 'dateTime': date,
-                'timeZone': 'America/Los_Angeles',
+                'timeZone': timezone,
             },
             'end': {
                 'dateTime': date,
-                'timeZone': 'America/Los_Angeles',
+                'timeZone': timezone,
             },
             'recurrence': [
                 
@@ -177,7 +189,10 @@ def parse_assignments(table_data):
 def list_assignments(request):
     data = cache.get("user_boo")
     print(data)
-    parsed_files = []
+    for i in data:
+        filename, table = i
+        print(filename)
+        print(table)
     # for i in data:
     #     with i.open() as f:
     #         document = Document(f) #currently only supports docx files
@@ -185,11 +200,97 @@ def list_assignments(request):
     #             #print(p.text)  # parsePdf(p), parseWord(p), etc ?
     #             parsed_files.append(p.text)
     #             #break
-        
+
 
         #print(data)
-    return render(request, 'syllab_dash/list_assignments.html',{"cached_files_list": cache.get("user_boo"), "parsed_files": parsed_files})
+    return render(request, 'syllab_dash/list_assignments.html',{"file_data": data })
 
 
 def finished_upload(request):
     return render(request, 'syllab_dash/finished_upload.html')
+
+"""
+def insertEvents(request):
+    # If modifying these scopes, delete the file token.json.
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+
+    testEvent = {
+      'summary': 'This is a test event summary.',
+      'start': {
+        'dateTime': '2018-11-02T22:10:00',
+        'timeZone': time.tzname[time.daylight]
+      },
+      'end': {
+        'dateTime': '2018-11-02T23:00:00',
+        'timeZone': time.tzname[time.daylight]
+      },
+      'reminders': {
+        'useDefault': False,
+        'overrides': [
+          {'method': 'email', 'days': 7},
+          {'method': 'popup', 'minutes': 10},
+        ],
+      },
+    }
+
+
+    testEvent2 = {
+      'summary': 'This is a test event summary.',
+      'start': {
+        'dateTime': '2019-11-09T22:10:00',
+        'timeZone': time.tzname[time.daylight]
+      },
+      'end': {
+        'dateTime': '2018-11-09T23:00:00',
+        'timeZone': time.tzname[time.daylight]
+      },
+      'reminders': {
+        'useDefault': False,
+        'overrides': [
+          {'method': 'email', 'days': 7},
+          {'method': 'popup', 'minutes': 10},
+        ],
+      },
+    }
+
+
+
+    """
+    # Shows basic usage of the Google Calendar API.
+    # Prints the start and name of the next 10 events on the user's calendar.
+    # """
+    #
+    # flow = OAuth2WebServerFlow(
+    #     client_id='319052537199-fndghhjj6akqht9gmooe818k5b00jnp6.apps.googleusercontent.com',
+    #     client_secret='6yYGMakT8_lBX4mTiUr7yfb5',
+    #     scope='https://www.googleapis.com/auth/calendar',
+    #     user_agent='Syllab-Dash',
+    # )
+    # storage = Storage('calendar.dat')
+    # credentials = storage.get()
+    #
+    # code = request.GET.get('code')
+    # if credentials is None or credentials.invalid == True:
+    #     oauth_callback = 'index.html'
+    #     flow.redirect_uri = oauth_callback
+    #     flow.step1_get_authorize_url()
+    #     credential = flow.step2_exchange(code, http=None)
+    #     storage.put(credential)
+    #     credential.set_store(storage)
+    # http = httplib2.Http()
+    # http = credentials.authorize(http)
+    #
+    # service = build(serviceName='calendar', version='v3', http=http,
+    #                 developerKey='AIzaSyBP60OCOPNIXTWVHG-XmorCqvBsjzThdFQ')
+    #
+    # event = service.events().insert(calendarId='primary', body=testEvent).execute()
+    # event2 = service.events().insert(calendarId='primary', body=testEvent2).execute()
+    #
+    # if not event:
+    #     print("Error with adding event 1")
+    # else:
+    #     print("Added event 1 successfully... maybe.")
+    # if not event2:
+    #     print("Error with adding event 2")
+    # else:
+    #     print("Added event 2 successfully... maybe.")

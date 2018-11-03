@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-import pylibmc
-from memcacheify import memcacheify
+# import pylibmc
+# from memcacheify import memcacheify
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -89,10 +89,10 @@ DATABASES = {
     }
 }
 
-CACHES = memcacheify()
+#CACHES = memcacheify()
 
 
-# CACHES = {
+CACHES = {
 
 #     'default': {
 #         # Use pylibmc
@@ -132,12 +132,12 @@ CACHES = memcacheify()
 #             }
 #         }
 #     }
-#     # 'default': {
-#     #     'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-#     #     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-#     #     'LOCATION': 'unique-snowflake',
-#     # }
-# }
+     'default': {
+         'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+         'LOCATION': 'unique-snowflake',
+    }
+}
 
 
 # Password validation

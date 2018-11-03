@@ -5,12 +5,12 @@ from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
 from docx.api import Document
+
 from dateutil import parser
 from itertools import islice
-from datetime import * #get timestamp as key for cache: datetime.datetime.now
-import os
+import os  #get timestamp as key for cache: datetime.datetime.now
 import rfc3339      # for date object -> date string
-
+from datetime import * #get timestamp as key for cache: datetime.datetime.now
 
 # imports for google api
 from apiclient.discovery import build
@@ -78,7 +78,6 @@ def file_upload(request):
     candidate_tables = [] # tables that contain "date", or "week", or 
     parsed_table_data = [] #each row is dictionary, headers mapped to column data
     parsed_assignments = [] #only event data pulled from parsed_table_data
-
     if request.method == 'POST':
         for f in request.FILES.getlist('file'):
             filename = f.name
@@ -86,8 +85,9 @@ def file_upload(request):
             parsed_tables = file_tables(f,filename)
             candidate_tables = get_tables_cont_dates(parsed_tables)
             parsed_table_data =  parse_table_data(candidate_tables)
+            display_table_files = (filename, parsed_table_data)
             parsed_assignments = parse_assignments(parsed_table_data)
-            files_parsed.append(f)
+            files_parsed.append(display_table_files)
         cache.set(cache_key,files_parsed,cache_time)
         print("RENDERING NEW FILE")
         return redirect('list_assignments') #TODO: create a fail page
@@ -192,11 +192,13 @@ def parse_assignments(table_data):
         assignments.append(event)
 
         
-
 def list_assignments(request):
     data = cache.get("user_boo")
     print(data)
-    parsed_files = []
+    for i in data:
+        filename, table = i
+        print(filename)
+        print(table)
     # for i in data:
     #     with i.open() as f:
     #         document = Document(f) #currently only supports docx files
@@ -207,7 +209,7 @@ def list_assignments(request):
 
 
         #print(data)
-    return render(request, 'syllab_dash/list_assignments.html',{"cached_files_list": cache.get("user_boo"), "parsed_files": parsed_files})
+    return render(request, 'syllab_dash/list_assignments.html',{"file_data": data })
 
 
 def finished_upload(request):

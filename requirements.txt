@@ -1,8 +1,8 @@
 Django==2.1.2
 gunicorn
 whitenoise
-pylibmc==1.5.2
-django-heroku-memcacheify
+#pylibmc==1.5.2
+#django-heroku-memcacheify
 python-docx
 python-dateutil
 rfc3339

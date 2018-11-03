@@ -5,16 +5,11 @@ from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
 from docx.api import Document
-
 from dateutil import parser
-
 from itertools import islice
 from datetime import * #get timestamp as key for cache: datetime.datetime.now
 import os
 import rfc3339      # for date object -> date string
-
-
-import datetime #get timestamp as key for cache: datetime.datetime.now
 
 
 # imports for google api
@@ -23,8 +18,6 @@ from oauth2client.file import Storage
 from oauth2client.client import OAuth2WebServerFlow
 import time
 
-import os
-from itertools import islice
 # Create your views here.
 
 #helper functions
@@ -164,12 +157,14 @@ def parse_assignments(table_data):
     for row in table_data:
         date = row["date"]
         #parse date here
-        # date = parser.parse(date)
-        datetime_object = datetime.strptime('Jun 1 2005', '%b %d %Y')
-        datetime_object = rfc3339.rfc3339(datetime_object) #change to rfc3339 format
+        date = parser.parse(date, fuzzy=True)
+        if date.year:
+            datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+        else:
+            datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
         timezone = datetime.utcnow().astimezone().tzinfo
         print("my timezone")
-        #print(timezone)
+        print(timezone)
         print("my date")
         print(datetime_object)
         # print(date)
@@ -180,11 +175,11 @@ def parse_assignments(table_data):
             'description': '',
             'start': {
                 'dateTime': date,
-                'timeZone': 'America/Los_Angeles',
+                'timeZone': timezone,
             },
             'end': {
                 'dateTime': date,
-                'timeZone': 'America/Los_Angeles',
+                'timeZone': timezone,
             },
             'recurrence': [
                 

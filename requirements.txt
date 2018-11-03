@@ -3,4 +3,4 @@ gunicorn
 whitenoise
 pylibmc==1.5.2
 django-heroku-memcacheify
-docx
+python-docx

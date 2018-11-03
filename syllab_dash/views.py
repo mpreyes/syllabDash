@@ -11,6 +11,16 @@ from datetime import datetime #get timestamp as key for cache: datetime.datetime
 from dateutil import parser
 import os  #get timestamp as key for cache: datetime.datetime.now
 
+
+from itertools import islice
+from datetime import * #get timestamp as key for cache: datetime.datetime.now
+import os
+import rfc3339      # for date object -> date string
+
+
+import datetime #get timestamp as key for cache: datetime.datetime.now
+
+
 # imports for google api
 from apiclient.discovery import build
 from oauth2client.file import Storage
@@ -87,7 +97,6 @@ def file_upload(request):
             display_table_files = (filename, parsed_table_data)
             parsed_assignments = parse_assignments(parsed_table_data)
             files_parsed.append(display_table_files)
-
         cache.set(cache_key,files_parsed,cache_time)
         print("RENDERING NEW FILE")
         return redirect('list_assignments') #TODO: create a fail page
@@ -151,18 +160,22 @@ def parse_table_data(candidate_tables):
     # print(lower_data)
     return lower_data
 
+
 def parse_assignments(table_data):
     assignments = []
     for row in table_data:
         date = row["date"]
         #parse date here
-        #date = parser.parse(date)
-        datetime_object = datetime.strptime('Nov 1 2005  1:33PM', '%b %d %Y %I:%M%p')
+        # date = parser.parse(date)
+        datetime_object = datetime.strptime('Jun 1 2005', '%b %d %Y')
+        datetime_object = rfc3339.rfc3339(datetime_object) #change to rfc3339 format
         timezone = datetime.utcnow().astimezone().tzinfo
         print("my timezone")
-        print(timezone)
+        #print(timezone)
         print("my date")
-        #print(datetime_object)
+        print(datetime_object)
+        # print(date)
+        
         event = {
             'summary': 'TESTING',
             'location': '',

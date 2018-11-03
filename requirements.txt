@@ -2,5 +2,5 @@ Django==2.1.2
 gunicorn
 whitenoise
 pylibmc==1.5.2
-memcacheify
+django-heroku-memcacheify
 docx

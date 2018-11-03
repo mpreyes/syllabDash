@@ -55,12 +55,12 @@ def file_upload(request):
         for f in request.FILES.getlist('file'):
             filename = f.name
             print(filename)
-            handle_uploaded_file(f, filename)
+            #handle_uploaded_file(f, filename)
             files_parsed.append(f)
         cache.set(cache_key,files_parsed,cache_time)
         return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
-    return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
+    return render(request, 'syllab_dash/list_assignments.html') #TODO: create a fail page
 
 
 def show_file_contents(request):

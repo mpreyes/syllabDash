@@ -12,7 +12,8 @@ from itertools import islice
 
 import os  #get timestamp as key for cache: datetime.datetime.now
 import rfc3339      # for date object -> date string
-import datetime #get timestamp as key for cache: datetime.datetime.now
+import datetime  #get timestamp as key for cache: datetime.datetime.now
+from datetime import datetime
 # imports for google api
 from apiclient.discovery import build
 from oauth2client.file import Storage

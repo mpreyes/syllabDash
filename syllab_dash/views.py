@@ -7,6 +7,7 @@ from django.core.cache import cache
 from docx.api import Document
 
 from dateutil import parser
+from dateutil.parser import parse
 from itertools import islice
 import os  #get timestamp as key for cache: datetime.datetime.now
 import rfc3339      # for date object -> date string
@@ -17,19 +18,19 @@ from apiclient.discovery import build
 from oauth2client.file import Storage
 from oauth2client.client import OAuth2WebServerFlow
 import time
+import re
 
 # Create your views here.
 
 def file_tables(f,filename): # returns tables in document
-    print("parse files")
+    # print("parse files")
     document_tables = []
     document = Document(f) #currently only supports docx files
     for t in document.tables: #m
-        print("__ table __ ")
-        print(t)
+        # print("__ table __ ")
+        # print(t)
         document_tables.append(t)
     return document_tables
-
 
 #views
 
@@ -56,7 +57,8 @@ def file_upload(request):
             candidate_tables = get_tables_cont_dates(parsed_tables)
             parsed_table_data =  parse_table_data(candidate_tables)
             display_table_files = (filename, parsed_table_data)
-            parsed_assignments = parse_assignments(parsed_table_data)
+            parsed_assignments = parse_assignments(parsed_table_data, f)
+            parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
             files_parsed.append(display_table_files)
         cache.set(cache_key,files_parsed,cache_time)
         print("RENDERING NEW FILE")
@@ -74,7 +76,7 @@ def show_file_contents(request):
 
 def get_tables_cont_dates(tables): #parse tables, return those containing "date", "week"
     candidate_tables = []
-    print("parse tables, return those containing 'date', 'week'")
+    # print("parse tables, return those containing 'date', 'week'")
     for i in tables:
         for row in i.rows:
             for cell in row.cells:
@@ -86,7 +88,7 @@ def get_tables_cont_dates(tables): #parse tables, return those containing "date"
 def parse_table_data(candidate_tables):
     data = []
     for c in candidate_tables:
-        print(c)
+        # print(c)
         for i, row in enumerate(c.rows):
 
             text = (cell.text for cell in row.cells)
@@ -105,17 +107,20 @@ def parse_table_data(candidate_tables):
     for i in data:
         lower_dict = dict((k.lower(), v.strip('\n')) for k, v in i.items())
         lower_data.append(lower_dict)
-        print(lower_dict)
+        # print(lower_dict)
+
     return lower_data
 
 
-def parse_assignments(table_data):
+def parse_assignments(table_data, file):
     assignments = []
     for row in table_data:
         date = parse_date(row["date"])
+        print(date)
+        summary = parse_summary(row["assignments"],file) or parse_summary(row["assignment"],file)
         timezone = datetime.utcnow().astimezone().tzinfo
         event = {
-            'summary': 'TESTING',
+            'summary': summary,
             'location': '',
             'description': '',
             'start': {
@@ -131,7 +136,23 @@ def parse_assignments(table_data):
             'reminders': {},
             }
         assignments.append(event)
+    return assignments
 
+def parse_summary(assignment, file):
+    document = Document(file)
+    regex = re.compile("[A-Z][A-Z][A-Z] [0-9][0-9][0-9][0-9]")
+    course_title = ''
+    for paragraph in document.paragraphs:
+        result = regex.match(paragraph.text)
+        if(result):
+            course_title = result.group()
+            break
+    if assignment:
+        assignment = assignment.replace('\n', ', ')
+        summary = course_title + ' ' + assignment
+    else:
+        summary = 'N/A'       
+    return summary
 
 def parse_date(date):
     date = parser.parse(date, fuzzy=True)
@@ -139,15 +160,21 @@ def parse_date(date):
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
     else:
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+    return datetime_object
 
+def remove_dates_with_no_assignment(assignments): 
+    for i, entry in enumerate(assignments):
+        if entry['summary'] == 'N/A':
+            assignments.pop(i)
+    return assignments
         
 def list_assignments(request):
     data = cache.get("user_boo")
     print(data)
     for i in data:
         filename, table = i
-        print(filename)
-        print(table)
+        # print(filename)
+        # print(table)
     # for i in data:
     #     with i.open() as f:
     #         document = Document(f) #currently only supports docx files

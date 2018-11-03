@@ -5,9 +5,11 @@ from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.core.cache import cache
 from docx.api import Document
+
+from dateutil import parser
 from dateutil.parser import parse
 from itertools import islice
-from dateutil import parser
+
 import os  #get timestamp as key for cache: datetime.datetime.now
 import rfc3339      # for date object -> date string
 import datetime #get timestamp as key for cache: datetime.datetime.now
@@ -18,27 +20,24 @@ from oauth2client.client import OAuth2WebServerFlow
 import time
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
-
-import datetime
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 # from django.templatetags.static import static
-
+import re
 
 
 # Create your views here.
 
 def file_tables(f,filename): # returns tables in document
-    print("parse files")
+    # print("parse files")
     document_tables = []
     document = Document(f) #currently only supports docx files
     for t in document.tables: #m
-        print("__ table __ ")
-        print(t)
+        # print("__ table __ ")
+        # print(t)
         document_tables.append(t)
     return document_tables
-
 
 #views
 
@@ -65,7 +64,8 @@ def file_upload(request):
             candidate_tables = get_tables_cont_dates(parsed_tables)
             parsed_table_data =  parse_table_data(candidate_tables)
             display_table_files = (filename, parsed_table_data)
-            parsed_assignments = parse_assignments(parsed_table_data)
+            parsed_assignments = parse_assignments(parsed_table_data, f)
+            parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
             files_parsed.append(display_table_files)
         cache.set(cache_key,files_parsed,cache_time)
         print("RENDERING NEW FILE")
@@ -80,20 +80,10 @@ def show_file_contents(request):
 
     return render(request, 'syllab_dash/show_file_contents.html')
 
-# def get_table_index(tables):
-#     tableList = []
-#     for table in tables:
-#         for i, cell in table.rows[0]:
-#             if 'date' in cell.text:
-#                 tableList.append(i)
-
-# def parse_table(index);
-#     table = tables[index]
-
 
 def get_tables_cont_dates(tables): #parse tables, return those containing "date", "week"
     candidate_tables = []
-    print("parse tables, return those containing 'date', 'week'")
+    # print("parse tables, return those containing 'date', 'week'")
     for i in tables:
         for row in i.rows:
             for cell in row.cells:
@@ -105,7 +95,7 @@ def get_tables_cont_dates(tables): #parse tables, return those containing "date"
 def parse_table_data(candidate_tables):
     data = []
     for c in candidate_tables:
-        print(c)
+        # print(c)
         for i, row in enumerate(c.rows):
 
             text = (cell.text for cell in row.cells)
@@ -114,41 +104,32 @@ def parse_table_data(candidate_tables):
             if i == 0:
                 print(text)
                 keys = tuple(text)
-                #print(keys)
                 continue
             # Construct a dictionary for this row, mapping
             # keys to values for this row
             row_data = dict(zip(keys, text))
             data.append(row_data)
-    # print(data)
+
     lower_data = []
     for i in data:
         lower_dict = dict((k.lower(), v.strip('\n')) for k, v in i.items())
         lower_data.append(lower_dict)
-        print(lower_dict)
-    # print("after removal")
-    # print(lower_data)
+        # print(lower_dict)
+
     return lower_data
 
 
-def parse_assignments(table_data):
+def parse_assignments(table_data, file):
     assignments = []
     for row in table_data:
-        date = "date"
-        #parse date here
-        # date = parser.parse(date)
-        #datetime_object = datetime.strptime('Jun 1 2005', '%b %d %Y')
-        #datetime_object2 = rfc3339.rfc3339(datetime_object) #change to rfc3339 format
-        #timezone = datetime.utcnow().astimezone().tzinfo
-        timezone = "my timezone"
-        print("my timezone")
-        #print(timezone)
-        print("my date")
-        #print(datetime_object2)
-        # print(date)
-        
+        date = parse_date(row["date"])
+        for key in row.keys():
+            if 'assignment' in key:
+                summary = parse_summary(row[key], file)
+                break
+        timezone = datetime.utcnow().astimezone().tzinfo
         event = {
-            'summary': 'TESTING',
+            'summary': summary,
             'location': '',
             'description': '',
             'start': {
@@ -159,16 +140,42 @@ def parse_assignments(table_data):
                 'dateTime': date,
                 'timeZone': timezone,
             },
-            'recurrence': [
-                
-            ],
-            'attendees': [
-            ],
-            'reminders': {
-            },
+            'recurrence': [],
+            'attendees': [],
+            'reminders': {},
             }
         assignments.append(event)
+    return assignments
 
+def parse_summary(assignment, file):
+    document = Document(file)
+    regex = re.compile("[A-Z][A-Z][A-Z] [0-9][0-9][0-9][0-9]")
+    course_title = ''
+    for paragraph in document.paragraphs:
+        result = regex.match(paragraph.text)
+        if(result):
+            course_title = result.group()
+            break
+    if assignment:
+        assignment = assignment.replace('\n', ', ')
+        summary = course_title + ' ' + assignment
+    else:
+        summary = 'N/A'       
+    return summary
+
+def parse_date(date):
+    date = parser.parse(date, fuzzy=True)
+    if date.year:
+        datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+    else:
+        datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+    return datetime_object
+
+def remove_dates_with_no_assignment(assignments): 
+    for i, entry in enumerate(assignments):
+        if entry['summary'] == 'N/A':
+            assignments.pop(i)
+    return assignments
         
 def list_assignments(request):
     data = cache.get("user_boo")

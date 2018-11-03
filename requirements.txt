@@ -5,3 +5,4 @@ whitenoise
 #django-heroku-memcacheify
 python-docx
 python-dateutil
+rfc3339

@@ -15,12 +15,6 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SAS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static/syllab_dash/scss')
-STATIC_ROOT = SAS_PROCESSOR_ROOT
-COMPRESS_ROOT = os.path.join(BASE_DIR, 'static/syllab_dash/scss')
-
-SASS_PROCESSOR_ENABLED = True
-SASS_PROCESSOR_INCLUDE_FILE_PATTERN = r'^.+\.scss$'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -31,19 +25,8 @@ SECRET_KEY = 'a$=3l%wa#ts@hkzy(nfaq$k!ht(ieao9it-nektuux7ib^pvm0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0’, ‘localhost’]x
+ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost','syllab-dash.herokuapp.com']
 
-
-# Application definition
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'sass_processor.finders.CssFinder',
-]
-
-SASS_PROCESSOR_INCLUDE_DIRS = [
-    os.path.join(BASE_DIR, 'static/syllab_dash/scss'),
-]
 
 INSTALLED_APPS = [
     'syllab_dash.apps.SyllabDashConfig',
@@ -53,7 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'sass_processor',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 
@@ -86,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-print(TEMPLATES[0]['DIRS']);
+print(TEMPLATES[0]['DIRS'])
 
 WSGI_APPLICATION = 'syllabDash.wsgi.application'
 
@@ -98,6 +81,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
     }
 }
 
@@ -138,5 +128,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'syllab_dash','static', 'syllab_dash'),
+)
+
+
+

@@ -3,24 +3,70 @@
 {% load static %}
 
 {% block content %}
+
+<style>
+.text {font-weight: 700;
+  text-transform: uppercase;
+  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif"
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  padding: 15px;
+}
+
+.btn {
+  border: 2px solid #6ed3cf;
+  color: #6ed3cf;
+  background-color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+ .btn:hover {
+      background-color: #6ed3cf;
+      color: white;
+ }
+
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.choose-file {
+  background-color: white;
+  color: black;
+}
+
+.choose-file:hover {
+  cursor: pointer;
+}
+</style>
     <section class="bg-dark text-white">
       <div class="container text-center">
 
           <div class="row">
           <div class="col-lg-8 mx-auto text-center">
-            <h2 class="section-heading text-white">File upload</h2>
+            <h2 class="section-heading text-white text">File upload</h2>
             <hr class="light my-4">
               <table>
               <tr>
                 <td>
                   <form action="{{ request.build_absolute_uri }}" method="POST" enctype="multipart/form-data" >
                   {% csrf_token %}
-                  <input type="file" name="file" id="files" multiple/>
-
+                  <input class="choose-file" type="file" name="file" id="files" accept=".docx" multiple/>
                   <pre id="filelist" style="display:none;"></pre>
                   <br>
-
-                    <input type="submit" value="Upload Files" />
+                     <div class="upload-btn-wrapper">
+                      <input type="submit" value="Upload Files" class="btn"/>
+                    </div> 
                   </form>
                 </td>
               </tr>

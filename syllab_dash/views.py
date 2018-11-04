@@ -68,9 +68,6 @@ def file_upload(request):
 
 
 def show_file_contents(request):
-
-    return render(request, 'syllab_dash/show_file_contents.html')
-
     return render(request, 'syllab_dash/show_file_contents.html')
 
 
@@ -115,29 +112,30 @@ def parse_table_data(candidate_tables):
 def parse_assignments(table_data, file):
     assignments = []
     for row in table_data:
-        date = parse_date(row["date"])
-        for key in row.keys():
-            if 'assignment' in key:
-                summary = parse_summary(row[key], file)
-                break
-        timezone = datetime.utcnow().astimezone().tzinfo
-        event = {
-            'summary': summary,
-            'location': '',
-            'description': '',
-            'start': {
-                'dateTime': date,
-                'timeZone': timezone,
-            },
-            'end': {
-                'dateTime': date,
-                'timeZone': timezone,
-            },
-            'recurrence': [],
-            'attendees': [],
-            'reminders': {},
-            }
-        assignments.append(event)
+        if(row["date"]):
+            date = parse_date(row["date"])
+            for key in row.keys():
+                if 'assignment' in key:
+                    summary = parse_summary(row[key], file)
+                    break
+            timezone = datetime.utcnow().astimezone().tzinfo
+            event = {
+                'summary': summary,
+                'location': '',
+                'description': '',
+                'start': {
+                    'dateTime': date,
+                    'timeZone': timezone,
+                },
+                'end': {
+                    'dateTime': date,
+                    'timeZone': timezone,
+                },
+                'recurrence': [],
+                'attendees': [],
+                'reminders': {},
+                }
+            assignments.append(event)
     return assignments
 
 def parse_summary(assignment, file):

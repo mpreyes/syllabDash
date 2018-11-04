@@ -249,7 +249,7 @@ def insertEvents():
     
 
     # Call the Calendar API
-    now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    #now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
    
     event = service.events().insert(calendarId = 'primary', body=event).execute()
     print('Event created:')

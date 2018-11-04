@@ -69,7 +69,6 @@ def file_upload(request):
             candidate_tables = get_tables_cont_dates(parsed_tables)
             parsed_table_data =  parse_table_data(candidate_tables)
             display_table_files = (filename, parsed_table_data)
-
             parsed_assignments = parse_assignments(parsed_table_data, f)
             parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
             files_parsed.append(display_table_files)
@@ -197,15 +196,7 @@ def list_assignments(request):
             print(filename)
             print(table)
 
-    insertEvents()
-
-    # for i in data:
-    #     with i.open() as f:
-    #         document = Document(f) #currently only supports docx files
-    #         for p in document.paragraphs: #maybe split up file detection into separate functions
-    #             #print(p.text)  # parsePdf(p), parseWord(p), etc ?
-    #             parsed_files.append(p.text)
-    #             #break
+    #insertEvents()
 
 
         #print(data)
@@ -251,7 +242,7 @@ def insertEvents():
     service = build('calendar', 'v3', http=creds.authorize(Http()))
 
     # Call the Calendar API
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     print('Getting the upcoming 10 events')
     myCalendarId = "reyes.madelyn.mr@gmail.com"
     events_result = service.events().list(calendarId= myCalendarId, timeMin=now,

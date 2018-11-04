@@ -18,7 +18,7 @@
                   {% for event in file %}
                     <div class="form-group">
                       <input type="checkbox" class="form-control checkbox-style" checked></input>
-                      <input type="date" class="form-control input-style" value="{{ event.start.dateTime }}"></input>
+                      <input type="text" class="form-control input-style" value="{{ event.start.dateTime }}"></input>
                       <input type="text" class="form-control input-style" placeholder="Title..." value="{{ event.summary }}"></input>
                     </div>
                   {% endfor %}

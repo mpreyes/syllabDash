@@ -69,14 +69,11 @@ def file_upload(request):
             candidate_tables = get_tables_cont_dates(parsed_tables)
             parsed_table_data =  parse_table_data(candidate_tables)
             display_table_files = (filename, parsed_table_data)
-<<<<<<< HEAD
-            parsed_assignments = parse_assignments(parsed_table_data)
-            files_parsed.append(parsed_assignments)
-=======
+
             parsed_assignments = parse_assignments(parsed_table_data, f)
             parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
             files_parsed.append(display_table_files)
->>>>>>> 3b64d1933b5b0e51866365c541b731de75a80ce9
+
         cache.set(cache_key,files_parsed,cache_time)
         return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
@@ -122,11 +119,7 @@ def parse_table_data(candidate_tables):
     for i in data:
         lower_dict = dict((k.lower(), v.strip('\n')) for k, v in i.items())
         lower_data.append(lower_dict)
-<<<<<<< HEAD
-=======
-        # print(lower_dict)
 
->>>>>>> 3b64d1933b5b0e51866365c541b731de75a80ce9
     return lower_data
 
 
@@ -163,11 +156,7 @@ def parse_assignments(table_data, file):
             },
             }
         assignments.append(event)
-<<<<<<< HEAD
-        print(event['start']['dateTime'])
-    return assignments
 
-=======
     return assignments
 
 def parse_summary(assignment, file):
@@ -183,9 +172,9 @@ def parse_summary(assignment, file):
         assignment = assignment.replace('\n', ', ')
         summary = course_title + ' ' + assignment
     else:
-        summary = 'N/A'       
+        summary = 'N/A'
     return summary
->>>>>>> 3b64d1933b5b0e51866365c541b731de75a80ce9
+
 
 def parse_date(date):
     date = parser.parse(date, fuzzy=True)
@@ -193,27 +182,16 @@ def parse_date(date):
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
     else:
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
-<<<<<<< HEAD
 
-
-def list_assignments(request):
-    data = cache.get("user_boo")
-    print(data)
-
-    # for i in data:
-    #     filename, table = i
-    #     print(filename)
-    #     print(table)
-=======
     print(datetime_object)
     return datetime_object
 
-def remove_dates_with_no_assignment(assignments): 
+def remove_dates_with_no_assignment(assignments):
     for i, entry in enumerate(assignments):
         if entry['summary'] == 'N/A':
             assignments.pop(i)
     return assignments
-        
+
 def list_assignments(request):
     data = cache.get("user_boo")
     print(data)
@@ -224,7 +202,7 @@ def list_assignments(request):
             print(table)
 
     insertEvents()
->>>>>>> 3b64d1933b5b0e51866365c541b731de75a80ce9
+
     # for i in data:
     #     with i.open() as f:
     #         document = Document(f) #currently only supports docx files
@@ -245,7 +223,7 @@ def finished_upload(request):
 def insertEvents():
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
-    
+
     store = file.Storage('token.json')
     creds = store.get()
     event = {
@@ -288,7 +266,7 @@ def insertEvents():
 
     # calendar_list_entry = service.calendarList().get(calendarId= 'primary' ).execute()
     # print(calendar_list_entry['summary'])
-    
+
 
     # Call the Calendar API
     # now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
@@ -297,7 +275,7 @@ def insertEvents():
     # for rule in acl['items']:
     #     print (rule['id'])
     #     print(rule['role'])
-   
+
     event = service.events().insert(calendarId = 'primary', body=event).execute()
     print('Event created:')
     print(event.get('htmlLink'))
@@ -360,11 +338,11 @@ def insertEvents():
 
 
 
- 
+
 #    # Shows basic usage of the Google Calendar API.
 #    # Prints the start and name of the next 10 events on the user's calendar.
-    
-    
+
+
 #     flow = OAuth2WebServerFlow(
 #         client_id='319052537199-fndghhjj6akqht9gmooe818k5b00jnp6.apps.googleusercontent.com',
 #         client_secret='6yYGMakT8_lBX4mTiUr7yfb5',
@@ -373,7 +351,7 @@ def insertEvents():
 #     )
 #     storage = Storage('calendar.dat')
 #     credentials = storage.get()
-    
+
 #     code = request.GET.get('code')
 #     if credentials is None or credentials.invalid == True:
 #         oauth_callback = 'index.html'
@@ -384,13 +362,13 @@ def insertEvents():
 #         credential.set_store(storage)
 #     http = httplib2.Http()
 #     http = credentials.authorize(http)
-    
+
 #     service = build(serviceName='calendar', version='v3', http=http,
 #                     developerKey='AIzaSyBP60OCOPNIXTWVHG-XmorCqvBsjzThdFQ')
-    
+
 #     event = service.events().insert(calendarId='primary', body=testEvent).execute()
 #     event2 = service.events().insert(calendarId='primary', body=testEvent2).execute()
-    
+
 #     if not event:
 #         print("Error with adding event 1")
 #     else:

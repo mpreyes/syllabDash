@@ -67,6 +67,4 @@ uploads/*
 package.json
 package-lock.json
 
-*.gz
-*.svg
 

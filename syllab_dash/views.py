@@ -83,7 +83,6 @@ def show_file_contents(request):
 
     return render(request, 'syllab_dash/show_file_contents.html')
 
-    return render(request, 'syllab_dash/show_file_contents.html')
 
 
 def get_tables_cont_dates(tables): #parse tables, return those containing "date", "week"
@@ -126,8 +125,9 @@ def parse_table_data(candidate_tables):
 
 def parse_assignments(table_data, file):
     assignments = []
+    summary = ""
     for row in table_data:
-        date = parse_date(row["date"])
+        #date = parse_date(row["date"])
         for key in row.keys():
             if 'assignment' in key:
                 summary = parse_summary(row[key], file)
@@ -138,11 +138,11 @@ def parse_assignments(table_data, file):
             'location': '',
             'description': '',
             'start': {
-                'dateTime': date,
+                'dateTime': '2017 11 11',
                 'timeZone': timezone,
             },
             'end': {
-                'dateTime': date,
+                'dateTime': '2017 11 11',
                 'timeZone': timezone,
             },
             'recurrence': [],
@@ -174,6 +174,7 @@ def parse_date(date):
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
     else:
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+    print(datetime_object)
     return datetime_object
 
 def remove_dates_with_no_assignment(assignments): 
@@ -185,7 +186,7 @@ def remove_dates_with_no_assignment(assignments):
 def list_assignments(request):
     data = cache.get("user_boo")
     print(data)
-    for i in data:
+    for i in data: #here
         filename, table = i
         print(filename)
         print(table)
@@ -241,8 +242,15 @@ def insertEvents():
     },
     }
     if not creds or creds.invalid:
+        print("hi im if")
         flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
+        print("flow: ")
+        print(flow)
+        print("store")
+        print(store)
         creds = tools.run_flow(flow, store)
+        print("hoi ")
+    print(" i am here at service")
     service = build('calendar', 'v3', http=creds.authorize(Http()))
 
     # calendar_list_entry = service.calendarList().get(calendarId= 'primary' ).execute()
@@ -250,16 +258,16 @@ def insertEvents():
     
 
     # Call the Calendar API
-    now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    acl = service.acl().list(calendarId='primary').execute()
+    # now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    # acl = service.acl().list(calendarId='primary').execute()
 
-    for rule in acl['items']:
-        print (rule['id'])
-        print(rule['role'])
+    # for rule in acl['items']:
+    #     print (rule['id'])
+    #     print(rule['role'])
    
-    # event = service.events().insert(calendarId = 'primary', body=event).execute()
-    # print('Event created:')
-    # print(event.get('htmlLink'))
+    event = service.events().insert(calendarId = 'primary', body=event).execute()
+    print('Event created:')
+    print(event.get('htmlLink'))
 
     #events = events_result.get('items', [])
     # if not events:

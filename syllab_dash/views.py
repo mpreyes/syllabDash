@@ -211,6 +211,7 @@ def finished_upload(request):
 def insertEvents():
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
+    
     store = file.Storage('token.json')
     creds = store.get()
     event = {
@@ -250,10 +251,16 @@ def insertEvents():
 
     # Call the Calendar API
     now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    acl = service.acl().list(calendarId='primary').execute()
+
+    for rule in acl['items']:
+        print (rule['id'])
+        print(rule['role'])
    
-    event = service.events().insert(calendarId = 'primary', body=event).execute()
-    print('Event created:')
-    print(event.get('htmlLink'))
+    # event = service.events().insert(calendarId = 'primary', body=event).execute()
+    # print('Event created:')
+    # print(event.get('htmlLink'))
+
     #events = events_result.get('items', [])
     # if not events:
     #     print('No upcoming events found.')

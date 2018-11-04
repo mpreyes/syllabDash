@@ -20,36 +20,6 @@ import time
 
 # Create your views here.
 
-#helper functions
-
-# def handle_uploaded_file(file, filename):
-#     if not os.path.exists('uploads/'):
-#         print("made upload folder")
-#         os.mkdir('uploads/')
-
-#     with open('uploads/' + filename, 'wb+') as destination:
-#         print("dest " + str(destination))
-#         for chunk in file.chunks():
-#             destination.write(chunk)
-
-#     print("deleting files in upload folder")
-#     #delete_uploads() #uncomment me to see upload of files
-
-
-# def delete_uploads():
-#     folder = 'uploads/'
-#     for f in os.listdir(folder):
-#         print("file: " + str(f))
-#         file_path = os.path.join(folder,f)
-#         try:
-#             if os.path.isfile(file_path):
-#                 os.unlink(file_path)
-#         except Exception as e:
-#             print(e)
-
-
-
-
 def file_tables(f,filename): # returns tables in document
     print("parse files")
     document_tables = []
@@ -87,9 +57,8 @@ def file_upload(request):
             parsed_table_data =  parse_table_data(candidate_tables)
             display_table_files = (filename, parsed_table_data)
             parsed_assignments = parse_assignments(parsed_table_data)
-            files_parsed.append(display_table_files)
+            files_parsed.append(parsed_assignments)
         cache.set(cache_key,files_parsed,cache_time)
-        print("RENDERING NEW FILE")
         return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
     return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
@@ -100,16 +69,6 @@ def show_file_contents(request):
     return render(request, 'syllab_dash/show_file_contents.html')
 
     return render(request, 'syllab_dash/show_file_contents.html')
-
-# def get_table_index(tables):
-#     tableList = []
-#     for table in tables:
-#         for i, cell in table.rows[0]:
-#             if 'date' in cell.text:
-#                 tableList.append(i)
-
-# def parse_table(index);
-#     table = tables[index]
 
 
 def get_tables_cont_dates(tables): #parse tables, return those containing "date", "week"
@@ -135,40 +94,24 @@ def parse_table_data(candidate_tables):
             if i == 0:
                 print(text)
                 keys = tuple(text)
-                #print(keys)
                 continue
             # Construct a dictionary for this row, mapping
             # keys to values for this row
             row_data = dict(zip(keys, text))
             data.append(row_data)
-    # print(data)
+
     lower_data = []
     for i in data:
         lower_dict = dict((k.lower(), v.strip('\n')) for k, v in i.items())
         lower_data.append(lower_dict)
-        print(lower_dict)
-    # print("after removal")
-    # print(lower_data)
     return lower_data
 
 
 def parse_assignments(table_data):
     assignments = []
     for row in table_data:
-        date = row["date"]
-        #parse date here
-        date = parser.parse(date, fuzzy=True)
-        if date.year:
-            datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
-        else:
-            datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+        date = parse_date(row["date"])
         timezone = datetime.utcnow().astimezone().tzinfo
-        print("my timezone")
-        print(timezone)
-        print("my date")
-        print(datetime_object)
-        # print(date)
-
         event = {
             'summary': 'TESTING',
             'location': '',
@@ -181,25 +124,37 @@ def parse_assignments(table_data):
                 'dateTime': date,
                 'timeZone': timezone,
             },
-            'recurrence': [
-
-            ],
-            'attendees': [
-            ],
+            'recurrence': [],
+            'attendees': [],
             'reminders': {
+                'useDefault': False,
+                'overrides': [
+                  {'method': 'popup', 'minutes': 24 * 60 * 7},
+                  {'method': 'popup', 'minutes': 24 * 60},
+                ],
             },
             }
         assignments.append(event)
+        print(event['start']['dateTime'])
     return assignments
+
+
+def parse_date(date):
+    date = parser.parse(date, fuzzy=True)
+    if date.year:
+        datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+    else:
+        datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
 
 
 def list_assignments(request):
     data = cache.get("user_boo")
     print(data)
-    for i in data:
-        filename, table = i
-        print(filename)
-        print(table)
+
+    # for i in data:
+    #     filename, table = i
+    #     print(filename)
+    #     print(table)
     # for i in data:
     #     with i.open() as f:
     #         document = Document(f) #currently only supports docx files

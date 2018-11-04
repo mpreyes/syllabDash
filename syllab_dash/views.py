@@ -117,11 +117,7 @@ def parse_table_data(candidate_tables):
     for i in data:
         lower_dict = dict((k.lower(), v.strip('\n')) for k, v in i.items())
         lower_data.append(lower_dict)
-<<<<<<< HEAD
-=======
-        # print(lower_dict)
 
->>>>>>> 3b64d1933b5b0e51866365c541b731de75a80ce9
     return lower_data
 
 

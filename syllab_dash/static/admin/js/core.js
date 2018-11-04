@@ -30,11 +30,7 @@ function removeChildren(a) {
 
 // ----------------------------------------------------------------------------
 // Find-position functions by PPK
-<<<<<<< HEAD
-// See https://www.quirksmode.org/js/findpos.html
-=======
 // See http://www.quirksmode.org/js/findpos.html
->>>>>>> 3b64d1933b5b0e51866365c541b731de75a80ce9
 // ----------------------------------------------------------------------------
 function findPosX(obj) {
     'use strict';

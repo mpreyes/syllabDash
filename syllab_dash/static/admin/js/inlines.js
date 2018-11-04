@@ -13,11 +13,7 @@
  * and modified for Django by Jannis Leidel, Travis Swicegood and Julien Phalip.
  *
  * Licensed under the New BSD License
-<<<<<<< HEAD
- * See: https://opensource.org/licenses/bsd-license.php
-=======
  * See: http://www.opensource.org/licenses/bsd-license.php
->>>>>>> 3b64d1933b5b0e51866365c541b731de75a80ce9
  */
 (function($) {
     'use strict';

@@ -73,7 +73,10 @@ def file_upload(request):
             parsed_assignments = parse_assignments(parsed_table_data, f)
             parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
             files_parsed.append(display_table_files)
+<<<<<<< HEAD
 
+=======
+>>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
         cache.set(cache_key,files_parsed,cache_time)
         return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
@@ -81,7 +84,6 @@ def file_upload(request):
 
 
 def show_file_contents(request):
-
     return render(request, 'syllab_dash/show_file_contents.html')
 
 
@@ -156,7 +158,10 @@ def parse_assignments(table_data, file):
             },
             }
         assignments.append(event)
+<<<<<<< HEAD
 
+=======
+>>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     return assignments
 
 def parse_summary(assignment, file):
@@ -182,7 +187,10 @@ def parse_date(date):
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
     else:
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+<<<<<<< HEAD
 
+=======
+>>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     print(datetime_object)
     return datetime_object
 
@@ -201,8 +209,12 @@ def list_assignments(request):
             print(filename)
             print(table)
 
+<<<<<<< HEAD
     insertEvents()
 
+=======
+    #insertEvents()
+>>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     # for i in data:
     #     with i.open() as f:
     #         document = Document(f) #currently only supports docx files
@@ -220,30 +232,29 @@ def finished_upload(request):
     return render(request, 'syllab_dash/finished_upload.html')
 
 
+
+
+
 def insertEvents():
-    # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
 
+<<<<<<< HEAD
     store = file.Storage('token.json')
     creds = store.get()
+=======
+>>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     event = {
-    'summary': 'A SYLLAB DASH EVENT',
+    'summary': 'NEW SYLLAB DASH EVENT -- HI',
     'location': '800 Howard St., San Francisco, CA 94103',
-    'description': 'WELCOME TO SYLLAB DASH',
+    'description': 'A chance to hear more about Google\'s developer products.',
     'start': {
-        'dateTime': '2015-05-28T09:00:00-07:00',
-        'timeZone': 'America/Los_Angeles',
+        'dateTime': '2019-01-02T09:00:00-07:00',
+        'timeZone': 'America/Chicago',
     },
     'end': {
-        'dateTime': '2015-05-28T17:00:00-07:00',
-        'timeZone': 'America/Los_Angeles',
+        'dateTime': '2019-01-02T17:00:00-07:00',
+        'timeZone': 'America/Chicago',
     },
-    'recurrence': [
-        'RRULE:FREQ=DAILY;COUNT=2'
-    ],
-    'attendees': [
-        {'email': 'lpage@example.com'},
-    ],
     'reminders': {
         'useDefault': False,
         'overrides': [
@@ -252,18 +263,16 @@ def insertEvents():
         ],
     },
     }
+
+
+    store = file.Storage('token.json')
+    creds = store.get()
     if not creds or creds.invalid:
-        print("hi im if")
         flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
-        print("flow: ")
-        print(flow)
-        print("store")
-        print(store)
         creds = tools.run_flow(flow, store)
-        print("hoi ")
-    print(" i am here at service")
     service = build('calendar', 'v3', http=creds.authorize(Http()))
 
+<<<<<<< HEAD
     # calendar_list_entry = service.calendarList().get(calendarId= 'primary' ).execute()
     # print(calendar_list_entry['summary'])
 
@@ -280,16 +289,32 @@ def insertEvents():
     print('Event created:')
     print(event.get('htmlLink'))
 
+=======
+    # Call the Calendar API
+    now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    print('Getting the upcoming 10 events')
+    myCalendarId = "reyes.madelyn.mr@gmail.com"
+    events_result = service.events().list(calendarId= myCalendarId, timeMin=now,
+                                        maxResults=10, singleEvents=True,
+                                        orderBy='startTime').execute()
+>>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     #events = events_result.get('items', [])
+
     # if not events:
     #     print('No upcoming events found.')
     # for event in events:
     #     start = event['start'].get('dateTime', event['start'].get('date'))
     #     print(start, event['summary'])
 
+    event = service.events().insert(calendarId='primary', body=event).execute()
 
+    calendar_list_entry = service.calendarList().get(calendarId='primary').execute()
+    print(calendar_list_entry['summary'])
 
+    print('Event created:')
+    print(event.get('htmlLink'))
 
+<<<<<<< HEAD
     # SCOPES = 'https://www.googleapis.com/auth/calendar'
 
     # event = {
@@ -377,3 +402,5 @@ def insertEvents():
 #         print("Error with adding event 2")
 #     else:
 #         print("Added event 2 successfully... maybe.")
+=======
+>>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c

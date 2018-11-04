@@ -187,9 +187,10 @@ def list_assignments(request):
     data = cache.get("user_boo")
     print(data)
     for i in data: #here
-        filename, table = i
-        print(filename)
-        print(table)
+        if i != None:
+            filename, table = i
+            print(filename)
+            print(table)
 
     insertEvents()
     # for i in data:

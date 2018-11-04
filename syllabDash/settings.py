@@ -177,7 +177,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_URL = '/static/'
+STATIC_URL = '/syllab_dash/static/'
 
 STATICFILE_DIRS = (
     os.path.join(BASE_DIR, 'syllab_dash', 'static', 'syllab_dash')

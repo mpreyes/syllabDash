@@ -58,7 +58,7 @@ def file_upload(request):
     cache_time = 7200 # time in seconds for cache to be valid, 2 hours
     files_parsed = [] #files parsed
     parsed_tables = [] #extracting tables from document
-    candidate_tables = [] # tables that contain "date", or "week", or 
+    candidate_tables = [] # tables that contain "date", or "week", or
     parsed_table_data = [] #each row is dictionary, headers mapped to column data
     parsed_assignments = [] #only event data pulled from parsed_table_data
     if request.method == 'POST':
@@ -69,18 +69,17 @@ def file_upload(request):
             candidate_tables = get_tables_cont_dates(parsed_tables)
             parsed_table_data =  parse_table_data(candidate_tables)
             display_table_files = (filename, parsed_table_data)
+
             parsed_assignments = parse_assignments(parsed_table_data, f)
             parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
             files_parsed.append(display_table_files)
         cache.set(cache_key,files_parsed,cache_time)
-        print("RENDERING NEW FILE")
         return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
     return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
 
 
 def show_file_contents(request):
-
     return render(request, 'syllab_dash/show_file_contents.html')
 
 
@@ -118,7 +117,6 @@ def parse_table_data(candidate_tables):
     for i in data:
         lower_dict = dict((k.lower(), v.strip('\n')) for k, v in i.items())
         lower_data.append(lower_dict)
-        # print(lower_dict)
 
     return lower_data
 
@@ -147,7 +145,13 @@ def parse_assignments(table_data, file):
             },
             'recurrence': [],
             'attendees': [],
-            'reminders': {},
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                  {'method': 'popup', 'minutes': 24 * 60 * 7},
+                  {'method': 'popup', 'minutes': 24 * 60},
+                ],
+            },
             }
         assignments.append(event)
     return assignments
@@ -167,6 +171,7 @@ def parse_summary(assignment, file):
     else:
         summary = 'N/A'       
     return summary
+
 
 def parse_date(date):
     date = parser.parse(date, fuzzy=True)

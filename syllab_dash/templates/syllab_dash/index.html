@@ -19,7 +19,7 @@
   </div>
 </header>
 
-<section class="bg-primary" id="about">
+<!-- <section class="bg-primary" id="about">
   <div class="container">
     <div class="row">
       <div class="col-lg-8 mx-auto text-center">
@@ -30,13 +30,13 @@
       </div>
     </div>
   </div>
-</section>
+</section> -->
 
 <section id="services">
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
-        <h2 class="section-heading">How To Use</h2>
+        <h2 class="section-heading">Special Sauce Recipe</h2>
         <hr class="my-4">
       </div>
     </div>
@@ -70,73 +70,192 @@
 
 <section class="p-0" id="portfolio">
   <div class="container-fluid p-0">
-    <div class="row no-gutters popup-gallery">
+    <div class="row no-gutters">
 
 
-      <div class="col-lg-3 col-sm-6">
-        <a class="portfolio-box" href="{% static "syllab_dash/images/portfolio/fullsize/1.jpg" %}">
-          <img class="img-fluid" src="{% static "syllab_dash/images/portfolio/thumbnails/1.jpg" %}" alt="">
-          <div class="portfolio-box-caption">
-            <div class="portfolio-box-caption-content">
-              <div class="project-category text-faded">
-                M
+      <div class="col-lg-3 col-sm-6 madelyn imageStyle">
+        <!-- Button trigger modal -->
+        <a class="portfolio-box fixHeight" data-toggle="modal" data-target="#madelynModal" href="">
+        <!-- <img class="img-fluid" src="{% static "syllab_dash/images/portfolio/thumbnails/mad.jpg" %}" alt=""> -->
+        <div class="portfolio-box-caption">
+          <div class="portfolio-box-caption-content">
+            <div class="project-name">
+              Madelyn Reyes
+            </div>
+          </div>
+        </div>
+        </a>
+        <!-- Modal -->
+        <div id="madelynModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLongTitle">Madelyn Reyes</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
-              <div class="project-name">
-                Madelyn Reyes
+              <div class="modal-body">
+                <ul>
+                  <li>Senior at Lipscomb University</li>
+                  <li>Majoring in Computer Science with a focus in Software Engineering and a Math minor</li>
+                  <li>Originally from Honduras</li>
+                </ul>
+              </div>
+              <div class="col-8">
+                <i class="fab fa-github fa-3x mb-3"></i>
+                <a href="https://github.com/mpreyes">github.com/mpreyes</a>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
-        </a>
+        </div>
       </div>
-      <div class="col-lg-3 col-sm-6">
-        <a class="portfolio-box" href="{% static "syllab_dash/images/portfolio/fullsize/2.jpg" %}">
-          <img class="img-fluid" src="{% static "syllab_dash/images/portfolio/thumbnails/2.jpg" %}" alt="">
+      <div class="col-lg-3 col-sm-6 andie imageStyle">
+        <a class="portfolio-box fixHeight" data-toggle="modal" data-target="#andieModal" href="">
+          <!-- <img class="img-fluid" src="{% static "syllab_dash/images/portfolio/thumbnails/andie.jpg" %}" alt=""> -->
           <div class="portfolio-box-caption">
             <div class="portfolio-box-caption-content">
-              <div class="project-category text-faded">
-                A
-              </div>
               <div class="project-name">
                 Andie Goode
               </div>
             </div>
           </div>
         </a>
+        <!-- Modal -->
+        <div id="andieModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Andie Goode</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <ul>
+                  <li>Senior at Lipscomb University</li>
+                  <li>Majoring in Computer Science with a focus in Software Engineering and a Math minor</li>
+                  <li>Has no interesting fatcs</li>
+                </ul>
+              </div>
+              <div class="col-8">
+                <i class="fab fa-github fa-3x mb-3"></i>
+                <a href="https://github.com/andiegoode12">github.com/andiegoode12</a>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-3 col-sm-6">
-        <a class="portfolio-box" href="{% static "syllab_dash/images/portfolio/fullsize/3.jpg" %}">
-          <img class="img-fluid" src="{% static "syllab_dash/images/portfolio/thumbnails/3.jpg" %}" alt="">
+
+      <div class="col-lg-3 col-sm-6 robert imageStyle">
+        <a class="portfolio-box fixHeight" data-toggle="modal" data-target="#robertModal" href="">
+          <!-- <img class="img-fluid" src="{% static "syllab_dash/images/portfolio/thumbnails/robert.jpg" %}" alt=""> -->
           <div class="portfolio-box-caption">
             <div class="portfolio-box-caption-content">
-              <div class="project-category text-faded">
-                R
-              </div>
               <div class="project-name">
                 Robert Lockwood
               </div>
             </div>
           </div>
         </a>
+        <!-- Modal -->
+        <div id="robertModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Robert Lockwood</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <ul>
+                  <li>Junior at Lipscomb University</li>
+                  <li>Dual majoring in Computer Science & Mathematics</li>
+                  <li>Has no interesting fatcs</li>
+                </ul>
+              </div>
+              <div class="col-8">
+                <i class="fab fa-github fa-3x mb-3"></i>
+                <a href="https://github.com/StitchLockwood">github.com/StitchLockwood</a>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-3 col-sm-6">
-        <a class="portfolio-box" href="{% static "syllab_dash/images/portfolio/fullsize/4.jpg" %}">
-          <img class="img-fluid" src="{% static "syllab_dash/images/portfolio/thumbnails/4.jpg" %}" alt="">
+
+      <div class="col-lg-3 col-sm-6 gabe imageStyle">
+        <a class="portfolio-box fixHeight" data-toggle="modal" data-target="#gabeModal" href="">
+          <!-- <img class="img-fluid" src="{% static "syllab_dash/images/portfolio/thumbnails/gabe.jpg" %}" alt=""> -->
           <div class="portfolio-box-caption">
             <div class="portfolio-box-caption-content">
-              <div class="project-category text-faded">
-                G
-              </div>
               <div class="project-name">
                 Gabe Ambrosio
               </div>
             </div>
           </div>
         </a>
+        <!-- Modal -->
+        <div id="gabeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Hi, I'm Gabe
+              </div>
+              <div class="col-8">
+                <i class="fab fa-github fa-3x mb-3"></i>
+                <a href="https://github.com/ambrosiogabe">github.com/ambrosiogabe</a>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-
 
     </div>
   </div>
 </section>
+<style>
+  .fixHeight{
+    height: 200px;
+  }
+  .imageStyle{
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+  }
+  .madelyn{
+    background-image: url("{% static "syllab_dash/images/portfolio/thumbnails/mad.jpg" %}");
+    background-style: cover;
+  }
+  .andie{
+    background-image: url("{% static "syllab_dash/images/portfolio/thumbnails/and.jpg" %}");
+    background-style: cover;
+  }
+  .robert{
+    background-image: url("{% static "syllab_dash/images/portfolio/thumbnails/rob.jpg" %}");
+    background-style: cover;
+  }
+  .gabe{
+    background-image: url("{% static "syllab_dash/images/portfolio/thumbnails/gab.jpg" %}");
+    background-style: cover;
+  }
+</style>
 {% endblock %}

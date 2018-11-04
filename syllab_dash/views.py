@@ -9,16 +9,28 @@ from docx.api import Document
 from dateutil import parser
 from dateutil.parser import parse
 from itertools import islice
+
 import os  #get timestamp as key for cache: datetime.datetime.now
 import rfc3339      # for date object -> date string
-from datetime import * #get timestamp as key for cache: datetime.datetime.now
-
+import datetime  #get timestamp as key for cache: datetime.datetime.now
+from datetime import datetime
 # imports for google api
+from datetime import *
 from apiclient.discovery import build
 from oauth2client.file import Storage
 from oauth2client.client import OAuth2WebServerFlow
 import time
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from datetime import datetime
+from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
+# from django.templatetags.static import static
 import re
+
+
+
+
 
 # Create your views here.
 
@@ -46,7 +58,7 @@ def file_upload(request):
     cache_time = 7200 # time in seconds for cache to be valid, 2 hours
     files_parsed = [] #files parsed
     parsed_tables = [] #extracting tables from document
-    candidate_tables = [] # tables that contain "date", or "week", or 
+    candidate_tables = [] # tables that contain "date", or "week", or
     parsed_table_data = [] #each row is dictionary, headers mapped to column data
     parsed_assignments = [] #only event data pulled from parsed_table_data
     if request.method == 'POST':
@@ -57,11 +69,11 @@ def file_upload(request):
             candidate_tables = get_tables_cont_dates(parsed_tables)
             parsed_table_data =  parse_table_data(candidate_tables)
             display_table_files = (filename, parsed_table_data)
+
             parsed_assignments = parse_assignments(parsed_table_data, f)
             parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
             files_parsed.append(display_table_files)
         cache.set(cache_key,files_parsed,cache_time)
-        print("RENDERING NEW FILE")
         return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
     return render(request, 'syllab_dash/file_upload.html') #TODO: create a fail page
@@ -69,6 +81,7 @@ def file_upload(request):
 
 def show_file_contents(request):
     return render(request, 'syllab_dash/show_file_contents.html')
+
 
 
 def get_tables_cont_dates(tables): #parse tables, return those containing "date", "week"
@@ -104,38 +117,47 @@ def parse_table_data(candidate_tables):
     for i in data:
         lower_dict = dict((k.lower(), v.strip('\n')) for k, v in i.items())
         lower_data.append(lower_dict)
+<<<<<<< HEAD
+=======
         # print(lower_dict)
 
+>>>>>>> 3b64d1933b5b0e51866365c541b731de75a80ce9
     return lower_data
 
 
 def parse_assignments(table_data, file):
     assignments = []
+    summary = ""
     for row in table_data:
-        if(row["date"]):
-            date = parse_date(row["date"])
-            for key in row.keys():
-                if 'assignment' in key:
-                    summary = parse_summary(row[key], file)
-                    break
-            timezone = datetime.utcnow().astimezone().tzinfo
-            event = {
-                'summary': summary,
-                'location': '',
-                'description': '',
-                'start': {
-                    'dateTime': date,
-                    'timeZone': timezone,
-                },
-                'end': {
-                    'dateTime': date,
-                    'timeZone': timezone,
-                },
-                'recurrence': [],
-                'attendees': [],
-                'reminders': {},
-                }
-            assignments.append(event)
+        #date = parse_date(row["date"])
+        for key in row.keys():
+            if 'assignment' in key:
+                summary = parse_summary(row[key], file)
+                break
+        timezone = datetime.utcnow().astimezone().tzinfo
+        event = {
+            'summary': summary,
+            'location': '',
+            'description': '',
+            'start': {
+                'dateTime': '2017 11 11',
+                'timeZone': timezone,
+            },
+            'end': {
+                'dateTime': '2017 11 11',
+                'timeZone': timezone,
+            },
+            'recurrence': [],
+            'attendees': [],
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                  {'method': 'popup', 'minutes': 24 * 60 * 7},
+                  {'method': 'popup', 'minutes': 24 * 60},
+                ],
+            },
+            }
+        assignments.append(event)
     return assignments
 
 def parse_summary(assignment, file):
@@ -154,12 +176,14 @@ def parse_summary(assignment, file):
         summary = 'N/A'       
     return summary
 
+
 def parse_date(date):
     date = parser.parse(date, fuzzy=True)
     if date.year:
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
     else:
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
+    print(datetime_object)
     return datetime_object
 
 def remove_dates_with_no_assignment(assignments): 
@@ -171,10 +195,13 @@ def remove_dates_with_no_assignment(assignments):
 def list_assignments(request):
     data = cache.get("user_boo")
     print(data)
-    for i in data:
-        filename, table = i
-        # print(filename)
-        # print(table)
+    for i in data: #here
+        if i != None:
+            filename, table = i
+            print(filename)
+            print(table)
+
+    insertEvents()
     # for i in data:
     #     with i.open() as f:
     #         document = Document(f) #currently only supports docx files
@@ -191,88 +218,161 @@ def list_assignments(request):
 def finished_upload(request):
     return render(request, 'syllab_dash/finished_upload.html')
 
-"""
-def insertEvents(request):
+
+def insertEvents():
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
-
-    testEvent = {
-      'summary': 'This is a test event summary.',
-      'start': {
-        'dateTime': '2018-11-02T22:10:00',
-        'timeZone': time.tzname[time.daylight]
-      },
-      'end': {
-        'dateTime': '2018-11-02T23:00:00',
-        'timeZone': time.tzname[time.daylight]
-      },
-      'reminders': {
+    
+    store = file.Storage('token.json')
+    creds = store.get()
+    event = {
+    'summary': 'A SYLLAB DASH EVENT',
+    'location': '800 Howard St., San Francisco, CA 94103',
+    'description': 'WELCOME TO SYLLAB DASH',
+    'start': {
+        'dateTime': '2015-05-28T09:00:00-07:00',
+        'timeZone': 'America/Los_Angeles',
+    },
+    'end': {
+        'dateTime': '2015-05-28T17:00:00-07:00',
+        'timeZone': 'America/Los_Angeles',
+    },
+    'recurrence': [
+        'RRULE:FREQ=DAILY;COUNT=2'
+    ],
+    'attendees': [
+        {'email': 'lpage@example.com'},
+    ],
+    'reminders': {
         'useDefault': False,
         'overrides': [
-          {'method': 'email', 'days': 7},
-          {'method': 'popup', 'minutes': 10},
+        {'method': 'email', 'minutes': 24 * 60},
+        {'method': 'popup', 'minutes': 10},
         ],
-      },
+    },
     }
+    if not creds or creds.invalid:
+        print("hi im if")
+        flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
+        print("flow: ")
+        print(flow)
+        print("store")
+        print(store)
+        creds = tools.run_flow(flow, store)
+        print("hoi ")
+    print(" i am here at service")
+    service = build('calendar', 'v3', http=creds.authorize(Http()))
+
+    # calendar_list_entry = service.calendarList().get(calendarId= 'primary' ).execute()
+    # print(calendar_list_entry['summary'])
+    
+
+    # Call the Calendar API
+    # now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    # acl = service.acl().list(calendarId='primary').execute()
+
+    # for rule in acl['items']:
+    #     print (rule['id'])
+    #     print(rule['role'])
+   
+    event = service.events().insert(calendarId = 'primary', body=event).execute()
+    print('Event created:')
+    print(event.get('htmlLink'))
+
+    #events = events_result.get('items', [])
+    # if not events:
+    #     print('No upcoming events found.')
+    # for event in events:
+    #     start = event['start'].get('dateTime', event['start'].get('date'))
+    #     print(start, event['summary'])
 
 
-    testEvent2 = {
-      'summary': 'This is a test event summary.',
-      'start': {
-        'dateTime': '2019-11-09T22:10:00',
-        'timeZone': time.tzname[time.daylight]
-      },
-      'end': {
-        'dateTime': '2018-11-09T23:00:00',
-        'timeZone': time.tzname[time.daylight]
-      },
-      'reminders': {
-        'useDefault': False,
-        'overrides': [
-          {'method': 'email', 'days': 7},
-          {'method': 'popup', 'minutes': 10},
-        ],
-      },
-    }
+
+
+    # SCOPES = 'https://www.googleapis.com/auth/calendar'
+
+    # event = {
+
+    #   'summary': 'This is a test event summary.',
+    #   'start': {
+    #     'dateTime': '2018-11-02T22:10:00',
+    #     'timeZone': time.tzname[time.daylight]
+    #   },
+    #   'end': {
+    #     'dateTime': '2018-11-02T23:00:00',
+    #     'timeZone': time.tzname[time.daylight]
+    #   },
+    #   'reminders': {
+    #     'useDefault': False,
+    #     'overrides': [
+    #       {'method': 'email', 'days': 7},
+    #       {'method': 'popup', 'minutes': 10},
+    #     ],
+    #   },
+
+    # }
+    # event = service.events().insert(calendarId='primary', body=event).execute()
+    # print('Event created:')
+    # print(event.get('htmlLink'))
+
+
+#     testEvent2 = {
+#       'summary': 'This is a test event summary.',
+#       'start': {
+#         'dateTime': '2019-11-09T22:10:00',
+#         'timeZone': time.tzname[time.daylight]
+#       },
+#       'end': {
+#         'dateTime': '2018-11-09T23:00:00',
+#         'timeZone': time.tzname[time.daylight]
+#       },
+#       'reminders': {
+#         'useDefault': False,
+#         'overrides': [
+#           {'method': 'email', 'days': 7},
+#           {'method': 'popup', 'minutes': 10},
+#         ],
+#       },
+#     }
 
 
 
-    """
-    # Shows basic usage of the Google Calendar API.
-    # Prints the start and name of the next 10 events on the user's calendar.
-    # """
-    #
-    # flow = OAuth2WebServerFlow(
-    #     client_id='319052537199-fndghhjj6akqht9gmooe818k5b00jnp6.apps.googleusercontent.com',
-    #     client_secret='6yYGMakT8_lBX4mTiUr7yfb5',
-    #     scope='https://www.googleapis.com/auth/calendar',
-    #     user_agent='Syllab-Dash',
-    # )
-    # storage = Storage('calendar.dat')
-    # credentials = storage.get()
-    #
-    # code = request.GET.get('code')
-    # if credentials is None or credentials.invalid == True:
-    #     oauth_callback = 'index.html'
-    #     flow.redirect_uri = oauth_callback
-    #     flow.step1_get_authorize_url()
-    #     credential = flow.step2_exchange(code, http=None)
-    #     storage.put(credential)
-    #     credential.set_store(storage)
-    # http = httplib2.Http()
-    # http = credentials.authorize(http)
-    #
-    # service = build(serviceName='calendar', version='v3', http=http,
-    #                 developerKey='AIzaSyBP60OCOPNIXTWVHG-XmorCqvBsjzThdFQ')
-    #
-    # event = service.events().insert(calendarId='primary', body=testEvent).execute()
-    # event2 = service.events().insert(calendarId='primary', body=testEvent2).execute()
-    #
-    # if not event:
-    #     print("Error with adding event 1")
-    # else:
-    #     print("Added event 1 successfully... maybe.")
-    # if not event2:
-    #     print("Error with adding event 2")
-    # else:
-    #     print("Added event 2 successfully... maybe.")
+ 
+#    # Shows basic usage of the Google Calendar API.
+#    # Prints the start and name of the next 10 events on the user's calendar.
+    
+    
+#     flow = OAuth2WebServerFlow(
+#         client_id='319052537199-fndghhjj6akqht9gmooe818k5b00jnp6.apps.googleusercontent.com',
+#         client_secret='6yYGMakT8_lBX4mTiUr7yfb5',
+#         scope='https://www.googleapis.com/auth/calendar',
+#         user_agent='Syllab-Dash',
+#     )
+#     storage = Storage('calendar.dat')
+#     credentials = storage.get()
+    
+#     code = request.GET.get('code')
+#     if credentials is None or credentials.invalid == True:
+#         oauth_callback = 'index.html'
+#         flow.redirect_uri = oauth_callback
+#         flow.step1_get_authorize_url()
+#         credential = flow.step2_exchange(code, http=None)
+#         storage.put(credential)
+#         credential.set_store(storage)
+#     http = httplib2.Http()
+#     http = credentials.authorize(http)
+    
+#     service = build(serviceName='calendar', version='v3', http=http,
+#                     developerKey='AIzaSyBP60OCOPNIXTWVHG-XmorCqvBsjzThdFQ')
+    
+#     event = service.events().insert(calendarId='primary', body=testEvent).execute()
+#     event2 = service.events().insert(calendarId='primary', body=testEvent2).execute()
+    
+#     if not event:
+#         print("Error with adding event 1")
+#     else:
+#         print("Added event 1 successfully... maybe.")
+#     if not event2:
+#         print("Error with adding event 2")
+#     else:
+#         print("Added event 2 successfully... maybe.")

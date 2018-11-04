@@ -73,10 +73,6 @@ def file_upload(request):
             parsed_assignments = parse_assignments(parsed_table_data, f)
             parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
             files_parsed.append(display_table_files)
-<<<<<<< HEAD
-
-=======
->>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
         cache.set(cache_key,files_parsed,cache_time)
         return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
@@ -158,10 +154,6 @@ def parse_assignments(table_data, file):
             },
             }
         assignments.append(event)
-<<<<<<< HEAD
-
-=======
->>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     return assignments
 
 def parse_summary(assignment, file):
@@ -187,10 +179,6 @@ def parse_date(date):
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
     else:
         datetime_object = rfc3339.rfc3339(date) #change to rfc3339 format
-<<<<<<< HEAD
-
-=======
->>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     print(datetime_object)
     return datetime_object
 
@@ -209,12 +197,8 @@ def list_assignments(request):
             print(filename)
             print(table)
 
-<<<<<<< HEAD
     insertEvents()
 
-=======
-    #insertEvents()
->>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     # for i in data:
     #     with i.open() as f:
     #         document = Document(f) #currently only supports docx files
@@ -234,15 +218,9 @@ def finished_upload(request):
 
 
 
-
 def insertEvents():
     SCOPES = 'https://www.googleapis.com/auth/calendar'
 
-<<<<<<< HEAD
-    store = file.Storage('token.json')
-    creds = store.get()
-=======
->>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     event = {
     'summary': 'NEW SYLLAB DASH EVENT -- HI',
     'location': '800 Howard St., San Francisco, CA 94103',
@@ -272,32 +250,13 @@ def insertEvents():
         creds = tools.run_flow(flow, store)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
 
-<<<<<<< HEAD
-    # calendar_list_entry = service.calendarList().get(calendarId= 'primary' ).execute()
-    # print(calendar_list_entry['summary'])
-
-
     # Call the Calendar API
-    # now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    # acl = service.acl().list(calendarId='primary').execute()
-
-    # for rule in acl['items']:
-    #     print (rule['id'])
-    #     print(rule['role'])
-
-    event = service.events().insert(calendarId = 'primary', body=event).execute()
-    print('Event created:')
-    print(event.get('htmlLink'))
-
-=======
-    # Call the Calendar API
-    now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     print('Getting the upcoming 10 events')
     myCalendarId = "reyes.madelyn.mr@gmail.com"
     events_result = service.events().list(calendarId= myCalendarId, timeMin=now,
                                         maxResults=10, singleEvents=True,
                                         orderBy='startTime').execute()
->>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c
     #events = events_result.get('items', [])
 
     # if not events:
@@ -314,93 +273,3 @@ def insertEvents():
     print('Event created:')
     print(event.get('htmlLink'))
 
-<<<<<<< HEAD
-    # SCOPES = 'https://www.googleapis.com/auth/calendar'
-
-    # event = {
-
-    #   'summary': 'This is a test event summary.',
-    #   'start': {
-    #     'dateTime': '2018-11-02T22:10:00',
-    #     'timeZone': time.tzname[time.daylight]
-    #   },
-    #   'end': {
-    #     'dateTime': '2018-11-02T23:00:00',
-    #     'timeZone': time.tzname[time.daylight]
-    #   },
-    #   'reminders': {
-    #     'useDefault': False,
-    #     'overrides': [
-    #       {'method': 'email', 'days': 7},
-    #       {'method': 'popup', 'minutes': 10},
-    #     ],
-    #   },
-
-    # }
-    # event = service.events().insert(calendarId='primary', body=event).execute()
-    # print('Event created:')
-    # print(event.get('htmlLink'))
-
-
-#     testEvent2 = {
-#       'summary': 'This is a test event summary.',
-#       'start': {
-#         'dateTime': '2019-11-09T22:10:00',
-#         'timeZone': time.tzname[time.daylight]
-#       },
-#       'end': {
-#         'dateTime': '2018-11-09T23:00:00',
-#         'timeZone': time.tzname[time.daylight]
-#       },
-#       'reminders': {
-#         'useDefault': False,
-#         'overrides': [
-#           {'method': 'email', 'days': 7},
-#           {'method': 'popup', 'minutes': 10},
-#         ],
-#       },
-#     }
-
-
-
-
-#    # Shows basic usage of the Google Calendar API.
-#    # Prints the start and name of the next 10 events on the user's calendar.
-
-
-#     flow = OAuth2WebServerFlow(
-#         client_id='319052537199-fndghhjj6akqht9gmooe818k5b00jnp6.apps.googleusercontent.com',
-#         client_secret='6yYGMakT8_lBX4mTiUr7yfb5',
-#         scope='https://www.googleapis.com/auth/calendar',
-#         user_agent='Syllab-Dash',
-#     )
-#     storage = Storage('calendar.dat')
-#     credentials = storage.get()
-
-#     code = request.GET.get('code')
-#     if credentials is None or credentials.invalid == True:
-#         oauth_callback = 'index.html'
-#         flow.redirect_uri = oauth_callback
-#         flow.step1_get_authorize_url()
-#         credential = flow.step2_exchange(code, http=None)
-#         storage.put(credential)
-#         credential.set_store(storage)
-#     http = httplib2.Http()
-#     http = credentials.authorize(http)
-
-#     service = build(serviceName='calendar', version='v3', http=http,
-#                     developerKey='AIzaSyBP60OCOPNIXTWVHG-XmorCqvBsjzThdFQ')
-
-#     event = service.events().insert(calendarId='primary', body=testEvent).execute()
-#     event2 = service.events().insert(calendarId='primary', body=testEvent2).execute()
-
-#     if not event:
-#         print("Error with adding event 1")
-#     else:
-#         print("Added event 1 successfully... maybe.")
-#     if not event2:
-#         print("Error with adding event 2")
-#     else:
-#         print("Added event 2 successfully... maybe.")
-=======
->>>>>>> fe16e520ddc206ddc7e8fa251419492333604f9c

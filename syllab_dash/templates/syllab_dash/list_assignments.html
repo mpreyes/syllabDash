@@ -25,9 +25,11 @@
                 {% endfor %}
               </form>
             </div>
-
+           
             <hr class="light my-4">
-
+            <a href="{% url 'finished_upload' %}">
+            <button type="button" class="btn btn-lg">NEXT</button>
+             </a>
             {% for file in parsed_files %}
               <li>{{file }}</li>
             {% endfor %}

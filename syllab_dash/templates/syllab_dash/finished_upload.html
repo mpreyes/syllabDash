@@ -1,2 +1,25 @@
 
-<h1> finished upload </h1>
+{% extends 'default.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="bg-primary" id="about">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto text-center">
+        <h2 class="section-heading text-white">Your assignments have been uploaded!</h2>
+        <hr class="light my-4">
+        <p class="text-faded mb-4">Check your  <a  class="btn btn-secondary btn-md" tabindex="-1" role="button" aria-disabled="true" href="https://www.google.com/calendar/event?eid=Ymxsc2RvZWswb2ZtdDdhNGR2aDRhazhsN2sgcmV5ZXMubWFkZWx5bi5tckBt">
+         calendar
+         </a>  for your assignments!</p>
+         <i class="far fa-calendar-alt fa-3x mb-3"></i>
+      </div>
+    </div>
+  </div>
+</section> 
+
+
+
+
+{% endblock %}

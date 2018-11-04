@@ -71,7 +71,8 @@ def file_upload(request):
             display_table_files = (filename, parsed_table_data)
             parsed_assignments = parse_assignments(parsed_table_data, f)
             parsed_assignments = remove_dates_with_no_assignment(parsed_assignments)
-            files_parsed.append(display_table_files)
+            print(parsed_assignments)
+            files_parsed.append(parsed_assignments)
         cache.set(cache_key,files_parsed,cache_time)
         return redirect('list_assignments') #TODO: create a fail page
         #return list_assignments(render,parsed_files_list = files_parsed)
@@ -104,7 +105,7 @@ def parse_table_data(candidate_tables):
             # Establish the mapping based on the first row
             # headers; these will become the keys of our dictionary
             if i == 0:
-                print(text)
+                #print(text)
                 keys = tuple(text)
                 continue
             # Construct a dictionary for this row, mapping
@@ -124,7 +125,7 @@ def parse_assignments(table_data, file):
     assignments = []
     summary = ""
     for row in table_data:
-        #date = parse_date(row["date"])
+        date = parse_date(row["date"]) #breaking cause of different syllabsu
         for key in row.keys():
             if 'assignment' in key:
                 summary = parse_summary(row[key], file)
@@ -132,14 +133,14 @@ def parse_assignments(table_data, file):
         timezone = datetime.utcnow().astimezone().tzinfo
         event = {
             'summary': summary,
-            'location': '',
-            'description': '',
+            'location': 'Nashville, TN',
+            'description': 'Your assignment description here',
             'start': {
-                'dateTime': '2017 11 11',
+                'dateTime': date,
                 'timeZone': timezone,
             },
             'end': {
-                'dateTime': '2017 11 11',
+                'dateTime': date,
                 'timeZone': timezone,
             },
             'recurrence': [],
@@ -192,9 +193,12 @@ def list_assignments(request):
     print(data)
     for i in data: #here
         if i != None:
-            filename, table = i
-            print(filename)
-            print(table)
+            print(i)
+            print("\n")
+            # filename, table = i
+            # print(filename)
+            # print(i['date'])
+            
 
     #insertEvents()
 
@@ -204,6 +208,7 @@ def list_assignments(request):
 
 
 def finished_upload(request):
+    
     return render(request, 'syllab_dash/finished_upload.html')
 
 
